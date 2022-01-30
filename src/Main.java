@@ -1,19 +1,17 @@
 import java.util.ArrayList;
 
 public class Main {
-    private static Manager manager;
-    private static ArrayList<Subtask> subtasks = new ArrayList<>();
-
     public static void main(String[] args) {
-
-        manager = new Manager();
+        Manager manager = new Manager();
         int id = manager.hashCode();
+        ArrayList<Subtask> subtasks = new ArrayList<>();
 
         // Создаём 2 задачи
         manager.newTask(new Task("Задача 1", "Описание задачи 1", ++id));
         manager.newTask(new Task("Задача 2", "Описание задачи 2", ++id));
 
         // создание эпика с 2 подзадачами
+        // не понял причём тут Ваш комментарий здесь  - "Тесты - это супер! :)"
         subtasks.add(manager.newSubtask(new Subtask("Подзадача 1","Описание подзадачи 1",++id)));
         subtasks.add(manager.newSubtask(new Subtask("Подзадача 2","Описание подзадачи 2",++id)));
         manager.newEpic(new Epic("Эпик 1","Описание эпика 1", ++id, subtasks));
@@ -40,7 +38,7 @@ public class Main {
 
         System.out.println("\nМеняем статус задач на IN_PROGRESS");
         for (Task task: manager.getAllTasks()) {
-            manager.SetStatusTask(task, Status.IN_PROGRESS);
+            manager.setStatusTask(task, Status.IN_PROGRESS);
         }
         System.out.println("\nНовый список задач с новым статусом");
         for (Task task: manager.getAllTasks()) {
@@ -49,7 +47,7 @@ public class Main {
 
         System.out.println("\nМеняем статус подзадач на DONE");
         for (Subtask subtask: manager.getAllSubtasks()) {
-            manager.SetStatusSubtask(subtask, Status.DONE);
+            manager.setStatusSubtask(subtask, Status.DONE);
         }
         System.out.println("\nНовый список подзадач и эпиков с новым статусом");
         for (Epic epic: manager.getAllEpics()) {

@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 
 public class Epic extends Task{
-    ArrayList<Subtask> subtasks = new ArrayList<>();
+    private ArrayList<Subtask> subtasks = new ArrayList<>();
 
     @Override
     public String toString() {
@@ -14,13 +14,11 @@ public class Epic extends Task{
                 "\n\t}";
     }
 
-    public Epic(String title, String description, int id)
-    {
+    public Epic(String title, String description, int id){
         super(title, description, id);
     }
 
-    public Epic(String title, String description, int id, ArrayList<Subtask> subtasks)
-    {
+    public Epic(String title, String description, int id, ArrayList<Subtask> subtasks){
         super(title, description, id);
         for (int i = 0; i < subtasks.size(); i++) {
             Subtask subtask = subtasks.get(i);
