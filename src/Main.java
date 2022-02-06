@@ -1,17 +1,22 @@
 import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        Manager manager = new Manager();
+        TaskManager manager = Manager.getDefault();
         int id = manager.hashCode();
         ArrayList<Subtask> subtasks = new ArrayList<>();
 
-        // Создаём 2 задачи
+        // Создаём 7 задач
         manager.newTask(new Task("Задача 1", "Описание задачи 1", ++id));
         manager.newTask(new Task("Задача 2", "Описание задачи 2", ++id));
+        manager.newTask(new Task("Задача 3", "Описание задачи 3", ++id));
+        manager.newTask(new Task("Задача 4", "Описание задачи 4", ++id));
+        manager.newTask(new Task("Задача 5", "Описание задачи 5", ++id));
+        manager.newTask(new Task("Задача 6", "Описание задачи 6", ++id));
+        manager.newTask(new Task("Задача 7", "Описание задачи 7", ++id));
 
         // создание эпика с 2 подзадачами
-        // не понял причём тут Ваш комментарий здесь  - "Тесты - это супер! :)"
         subtasks.add(manager.newSubtask(new Subtask("Подзадача 1","Описание подзадачи 1",++id)));
         subtasks.add(manager.newSubtask(new Subtask("Подзадача 2","Описание подзадачи 2",++id)));
         manager.newEpic(new Epic("Эпик 1","Описание эпика 1", ++id, subtasks));
@@ -36,50 +41,31 @@ public class Main {
             System.out.println(subtask);
         }
 
-        System.out.println("\nМеняем статус задач на IN_PROGRESS");
-        for (Task task: manager.getAllTasks()) {
-            manager.setStatusTask(task, Status.IN_PROGRESS);
-        }
-        System.out.println("\nНовый список задач с новым статусом");
-        for (Task task: manager.getAllTasks()) {
-            System.out.println(task);
-        }
-
-        System.out.println("\nМеняем статус подзадач на DONE");
-        for (Subtask subtask: manager.getAllSubtasks()) {
-            manager.setStatusSubtask(subtask, Status.DONE);
-        }
-        System.out.println("\nНовый список подзадач и эпиков с новым статусом");
+        System.out.println("\nВызываем getTask()");
+        /** Вызываем getEpic()*/
         for (Epic epic: manager.getAllEpics()) {
-            System.out.println(epic);
+            System.out.println(epic.getId());
+            manager.getEpic(epic.getId());
         }
-        for (Subtask subtask: manager.getAllSubtasks()) {
-            System.out.println(subtask);
-        }
-
-        System.out.println("\nУдаляем задачу");
+        /** Вызываем getTask()*/
         for (Task task: manager.getAllTasks()) {
-            System.out.println(task);
-            manager.delTask(task.id);
-            break;
+            System.out.println(task.getId());
+            manager.getTask(task.getId());
         }
-
-        System.out.println("\nУдаляем эпик");
-        for (Epic epic: manager.getAllEpics()) {
-            System.out.println(epic);
-            manager.delEpic(epic.id);
-            break;
-        }
-
-        System.out.println("\nНовый список задач, эпиков и подзадач");
-        for (Epic epic: manager.getAllEpics()) {
-            System.out.println(epic);
-        }
-        for (Task task: manager.getAllTasks()) {
-            System.out.println(task);
-        }
+        /** Вызываем getSubTask()*/
         for (Subtask subtask: manager.getAllSubtasks()) {
-            System.out.println(subtask);
+            System.out.println(subtask.getId());
+            manager.getSubtask(subtask.getId());
         }
+
+        System.out.println("\nИстория");
+        List<Task> tasks = Manager.getDefaultHistory().getHistory();
+        for (int i = 0;  i < tasks.size(); i++) {
+            System.out.print(tasks.get(i).getId());
+            if (i < (tasks.size() -1)) {
+                System.out.print(" -> ");
+            }
+        }
+        System.out.println();
     }
 }
