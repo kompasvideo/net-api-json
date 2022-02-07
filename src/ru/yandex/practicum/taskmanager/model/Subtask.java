@@ -1,3 +1,6 @@
+package ru.yandex.practicum.taskmanager.model;
+
+
 public class Subtask extends Task {
     private Epic parent;
 
@@ -7,7 +10,7 @@ public class Subtask extends Task {
 
     @Override
     public String toString() {
-        return "Subtask{" +
+        return "ru.yandex.practicum.taskmanager.model.Subtask{" +
                 "\n\t title= " + title +
                 "\n\t description= " + description +
                 "\n\t id= " + id +

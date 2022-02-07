@@ -1,11 +1,13 @@
+package ru.yandex.practicum.taskmanager.model;
+
 import java.util.ArrayList;
 
-public class Epic extends Task{
+public class Epic extends Task {
     private ArrayList<Subtask> subtasks = new ArrayList<>();
 
     @Override
     public String toString() {
-        return "Epic{" +
+        return "ru.yandex.practicum.taskmanager.model.Epic{" +
                 "\n\t title= " + title +
                 "\n\t description= " + description +
                 "\n\t id= " + id +

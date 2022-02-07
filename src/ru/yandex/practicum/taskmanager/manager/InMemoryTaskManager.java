@@ -1,13 +1,16 @@
+package ru.yandex.practicum.taskmanager.manager;
+
+import ru.yandex.practicum.taskmanager.model.*;
 import java.util.*;
 
-public class InMemoryTaskManager implements TaskManager, HistoryManager {
+public class InMemoryTaskManager implements TaskManager {
     private HashMap<Integer, Task> tasks = new HashMap();
     private HashMap<Integer, Subtask> subTasks = new HashMap();
     private HashMap<Integer, Epic> epics = new HashMap();
-    private static ArrayDeque<Task> queue = new ArrayDeque<>(10);
-    private final static int MAX_QUEUE = 10;
+    private HistoryManager historyManager;
 
-    public InMemoryTaskManager() {
+    public InMemoryTaskManager(HistoryManager historyManager) {
+        this.historyManager = historyManager;
     }
 
     // 2.1 Получение списка всех задач.
@@ -29,38 +32,51 @@ public class InMemoryTaskManager implements TaskManager, HistoryManager {
     // 2.2 Удаление всех задач.
     @Override
     public void delAllTasks() {
+        for (Task task: getAllTasks()) {
+            historyManager.remove(task);
+        }
         tasks.clear();
     }
 
     @Override
     public void delAllSubtasks() {
+        for (Subtask subtask: getAllSubtasks()) {
+            historyManager.remove(subtask);
+        }
         subTasks.clear();
     }
 
     @Override
     public void delAllEpics() {
+        for (Epic epic: getAllEpics()) {
+            historyManager.remove(epic);
+        }
+        for (Subtask subtask: getAllSubtasks()) {
+            historyManager.remove(subtask);
+        }
         epics.clear();
+        subTasks.clear();
     }
 
     // 2.3 Получение по идентификатору.
     @Override
     public Task getTask(int id) {
         Task task = tasks.get(id);
-        add(task);
+        historyManager.add(task);
         return task;
     }
 
     @Override
     public Subtask getSubtask(int id) {
         Subtask subTask = subTasks.get(id);
-        add(subTask);
+        historyManager.add(subTask);
         return subTask;
     }
 
     @Override
     public Epic getEpic(int id) {
         Epic epic = epics.get(id);
-        add(epic);
+        historyManager.add(epic);
         return epic;
     }
 
@@ -100,11 +116,13 @@ public class InMemoryTaskManager implements TaskManager, HistoryManager {
     // 2.6 Удаление по идентификатору.
     @Override
     public void delTask(int guid) {
+        historyManager.remove(getTask(guid));
         tasks.remove(guid);
     }
 
     @Override
     public void delSubtask(int guid) {
+        historyManager.remove(getSubtask(guid));
         subTasks.remove(guid);
     }
 
@@ -112,8 +130,10 @@ public class InMemoryTaskManager implements TaskManager, HistoryManager {
     public void delEpic(int guid) {
         ArrayList<Integer> ids = getEpic(guid).getSubtaskIds();
         for (int i = 0; i < ids.size(); i++) {
+            historyManager.remove(getSubtask(ids.get(i)));
             subTasks.remove(ids.get(i));
         }
+        historyManager.remove(getEpic(guid));
         epics.remove(guid);
     }
 
@@ -161,29 +181,5 @@ public class InMemoryTaskManager implements TaskManager, HistoryManager {
         } else if (doneStatus == count) {
             epic.setStatus(Status.DONE);
         } else epic.setStatus(Status.IN_PROGRESS);
-    }
-
-    /**
-     * Отображает последние просмотренные пользователем задачи
-     */
-    @Override
-    public List<Task> getHistory() {
-        List<Task> tasks = new ArrayList<>();
-        for (Task task: queue) {
-            tasks.add(task);
-        }
-        return tasks;
-    }
-
-    /** Добавляет Task в History */
-    @Override
-    public void add(Task task) {
-        if (queue.size() < MAX_QUEUE) {
-            queue.offer(task);
-        }
-        else {
-            queue.poll();
-            queue.offer(task);
-        }
     }
 }

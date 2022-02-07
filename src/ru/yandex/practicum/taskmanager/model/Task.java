@@ -1,3 +1,7 @@
+package ru.yandex.practicum.taskmanager.model;
+
+import java.util.Objects;
+
 public class Task {
     protected String title;
     protected String description;
@@ -45,11 +49,24 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Task{" +
+        return "ru.yandex.practicum.taskmanager.model.Task{" +
                 "\n\t title= " + title +
                 "\n\t description= " + description +
                 "\n\t id= " + id +
                 "\n\t status= " + status +
                 "\n\t}";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        return id == task.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

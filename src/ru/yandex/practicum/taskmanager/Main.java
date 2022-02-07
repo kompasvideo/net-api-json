@@ -1,5 +1,9 @@
+package ru.yandex.practicum.taskmanager;
+
 import java.util.ArrayList;
 import java.util.List;
+import ru.yandex.practicum.taskmanager.manager.*;
+import ru.yandex.practicum.taskmanager.model.*;
 
 public class Main {
     public static void main(String[] args) {

@@ -1,5 +1,7 @@
+package ru.yandex.practicum.taskmanager.manager;
+
+import ru.yandex.practicum.taskmanager.model.*;
 import java.util.Collection;
-import java.util.List;
 
 public interface TaskManager {
     // 2.1 Получение списка всех задач.
