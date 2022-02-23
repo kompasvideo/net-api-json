@@ -1,25 +1,19 @@
 package ru.yandex.practicum.taskmanager.manager;
 
 import ru.yandex.practicum.taskmanager.model.Task;
-
 import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager{
-
-
     private Map<Integer, Node<Task>> map = new HashMap<>();
-
-    transient int size = 0;
-
     /**
      * Pointer to first node.
      */
     transient Node<Task> first;
-
     /**
      * Pointer to last node.
      */
     transient Node<Task> last;
+
     /**
      * Добавляет Task в History
      * */
@@ -28,19 +22,15 @@ public class InMemoryHistoryManager implements HistoryManager{
         linkLast(task);
     }
 
-
     void linkLast(Task e) {
-        if (! map.containsKey(((Task)e).getId())) {
-            addNode(e);
-        } else {
-            Node<Task> old = map.get(((Task)e).getId());
+        if (map.containsKey(e.getId())) {
+            Node<Task> old = map.get(e.getId());
             removeNode(old);
-            addNode(e);
-            //old.item = e;
         }
+        addNode(e);
     }
 
-    private void addNode(Task e) {
+    void addNode(Task e) {
         final Node<Task> l = last;
         final Node<Task> newNode = new Node<>(l, e, null);
         last = newNode;
@@ -48,8 +38,7 @@ public class InMemoryHistoryManager implements HistoryManager{
             first = newNode;
         else
             l.next = newNode;
-        size++;
-        map.put(((Task) e).getId(), last);
+        map.put(e.getId(), last);
     }
 
     /**
@@ -60,8 +49,8 @@ public class InMemoryHistoryManager implements HistoryManager{
         return getTasks();
     }
 
-    ArrayList<Task> getTasks() {
-        ArrayList<Task> tasks = new ArrayList<>();
+    List<Task> getTasks() {
+        List<Task> tasks = new ArrayList<>();
         Node<Task> node = first;
         while(node != null) {
             tasks.add(node.item);
@@ -70,6 +59,10 @@ public class InMemoryHistoryManager implements HistoryManager{
         return tasks;
     }
 
+    /**
+     * Удаляет задачу по номеру задачи
+     * @param taskId - номер задачи
+     */
     @Override
     public void remove(int taskId){
         Node<Task> old = map.get(taskId);
@@ -89,7 +82,6 @@ public class InMemoryHistoryManager implements HistoryManager{
         } else {
             first = next;
         }
-        //e = null;
         return true;
     }
 }

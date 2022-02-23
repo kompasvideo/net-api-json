@@ -9,7 +9,8 @@ public class Main {
     public static void main(String[] args) {
         TaskManager manager = Manager.getDefault();
         int id = manager.hashCode();
-        ArrayList<Subtask> subtasks = new ArrayList<>();
+        // Collection не везде подходит, у него нет метода get(index)
+        List<Subtask> subtasks = new ArrayList<>();
 
         // Создаём 2 задач
         int taskId = manager.newTask(new Task("Задача 1", "Описание задачи 1", ++id));

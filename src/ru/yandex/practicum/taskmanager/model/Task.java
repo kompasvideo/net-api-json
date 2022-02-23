@@ -49,7 +49,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return "ru.yandex.practicum.taskmanager.model.Task{" +
+        return "Task{" +
                 "\n\t title= " + title +
                 "\n\t description= " + description +
                 "\n\t id= " + id +

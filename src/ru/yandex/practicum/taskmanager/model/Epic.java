@@ -1,13 +1,15 @@
 package ru.yandex.practicum.taskmanager.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class Epic extends Task {
-    private ArrayList<Subtask> subtasks = new ArrayList<>();
+    private Collection<Subtask> subtasks = new ArrayList<>();
 
     @Override
     public String toString() {
-        return "ru.yandex.practicum.taskmanager.model.Epic{" +
+        return "Epic{" +
                 "\n\t title= " + title +
                 "\n\t description= " + description +
                 "\n\t id= " + id +
@@ -20,7 +22,8 @@ public class Epic extends Task {
         super(title, description, id);
     }
 
-    public Epic(String title, String description, int id, ArrayList<Subtask> subtasks){
+    // Collection не везде подходит, у него нет метода get(index)
+    public Epic(String title, String description, int id, List<Subtask> subtasks){
         super(title, description, id);
         for (int i = 0; i < subtasks.size(); i++) {
             Subtask subtask = subtasks.get(i);
@@ -29,7 +32,7 @@ public class Epic extends Task {
         }
     }
 
-    public ArrayList<Subtask> getSubtasks() {
+    public Collection<Subtask> getSubtasks() {
         return subtasks;
     }
 
@@ -37,8 +40,9 @@ public class Epic extends Task {
      * Возвращяет id всех подзадач
      * @return
      */
-    public ArrayList<Integer> getSubtaskIds() {
-        ArrayList<Integer> ids = new ArrayList<>();
+    public List<Integer> getSubtaskIds() {
+        // Collection не везде подходит, у него нет метода get(index)
+        List<Integer> ids = new ArrayList<>();
         for (Subtask subtask: subtasks){
             ids.add(subtask.getId());
         }

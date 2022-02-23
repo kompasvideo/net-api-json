@@ -1,6 +1,5 @@
 package ru.yandex.practicum.taskmanager.manager;
 
-import java.util.ArrayDeque;
 import java.util.List;
 import ru.yandex.practicum.taskmanager.model.*;
 
@@ -9,6 +8,7 @@ public interface HistoryManager {
     void add(Task task);
 
     /**  а второй getHistory() — возвращать их список. */
+    // List оставлен по подсказке в задании
     List<Task> getHistory();
 
     /** удаляет задачу из истории */

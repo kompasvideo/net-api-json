@@ -4,9 +4,9 @@ import ru.yandex.practicum.taskmanager.model.*;
 import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
-    private HashMap<Integer, Task> tasks = new HashMap();
-    private HashMap<Integer, Subtask> subTasks = new HashMap();
-    private HashMap<Integer, Epic> epics = new HashMap();
+    private Map<Integer, Task> tasks = new HashMap();
+    private Map<Integer, Subtask> subTasks = new HashMap();
+    private Map<Integer, Epic> epics = new HashMap();
     private HistoryManager historyManager;
 
     public InMemoryTaskManager(HistoryManager historyManager) {
@@ -130,7 +130,8 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void delEpic(int id) {
-        ArrayList<Integer> ids = getEpic(id).getSubtaskIds();
+        // Collection не везде подходит, у него нет метода get(index)
+        List<Integer> ids = getEpic(id).getSubtaskIds();
         for (int i = 0; i < ids.size(); i++) {
             historyManager.remove(ids.get(i));
             subTasks.remove(ids.get(i));

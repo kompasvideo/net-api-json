@@ -10,7 +10,7 @@ public class Subtask extends Task {
 
     @Override
     public String toString() {
-        return "ru.yandex.practicum.taskmanager.model.Subtask{" +
+        return "Subtask{" +
                 "\n\t title= " + title +
                 "\n\t description= " + description +
                 "\n\t id= " + id +
