@@ -33,7 +33,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void delAllTasks() {
         for (Task task: getAllTasks()) {
-            historyManager.remove(task);
+            historyManager.remove(task.getId());
         }
         tasks.clear();
     }
@@ -41,7 +41,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void delAllSubtasks() {
         for (Subtask subtask: getAllSubtasks()) {
-            historyManager.remove(subtask);
+            historyManager.remove(subtask.getId());
         }
         subTasks.clear();
     }
@@ -49,10 +49,10 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void delAllEpics() {
         for (Epic epic: getAllEpics()) {
-            historyManager.remove(epic);
+            historyManager.remove(epic.getId());
         }
         for (Subtask subtask: getAllSubtasks()) {
-            historyManager.remove(subtask);
+            historyManager.remove(subtask.getId());
         }
         epics.clear();
         subTasks.clear();
@@ -82,8 +82,9 @@ public class InMemoryTaskManager implements TaskManager {
 
     // 2.4 Создание. Сам объект должен передаваться в качестве параметра.
     @Override
-    public void newTask(Task task) {
+    public int newTask(Task task) {
         tasks.put(task.getId(), task);
+        return task.getId();
     }
 
     @Override
@@ -93,8 +94,9 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Epic newEpic(Epic epic) {
-        return epics.put(epic.getId(), epic);
+    public int newEpic(Epic epic) {
+        epics.put(epic.getId(), epic);
+        return epic.getId();
     }
 
     // 2.5 Обновление. Новая версия объекта с верным идентификатор передаются в виде параметра.
@@ -115,26 +117,26 @@ public class InMemoryTaskManager implements TaskManager {
 
     // 2.6 Удаление по идентификатору.
     @Override
-    public void delTask(int guid) {
-        historyManager.remove(getTask(guid));
-        tasks.remove(guid);
+    public void delTask(int id) {
+        historyManager.remove(id);
+        tasks.remove(id);
     }
 
     @Override
-    public void delSubtask(int guid) {
-        historyManager.remove(getSubtask(guid));
-        subTasks.remove(guid);
+    public void delSubtask(int id) {
+        historyManager.remove(id);
+        subTasks.remove(id);
     }
 
     @Override
-    public void delEpic(int guid) {
-        ArrayList<Integer> ids = getEpic(guid).getSubtaskIds();
+    public void delEpic(int id) {
+        ArrayList<Integer> ids = getEpic(id).getSubtaskIds();
         for (int i = 0; i < ids.size(); i++) {
-            historyManager.remove(getSubtask(ids.get(i)));
+            historyManager.remove(ids.get(i));
             subTasks.remove(ids.get(i));
         }
-        historyManager.remove(getEpic(guid));
-        epics.remove(guid);
+        historyManager.remove(id);
+        epics.remove(id);
     }
 
     // 3.1 Получение списка всех подзадач определённого эпика.

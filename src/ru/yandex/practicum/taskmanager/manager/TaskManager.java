@@ -26,11 +26,11 @@ public interface TaskManager {
     Epic getEpic(int id);
 
     // 2.4 Создание. Сам объект должен передаваться в качестве параметра.
-    void newTask(Task task);
+    int newTask(Task task);
 
     Subtask newSubtask(Subtask subtask);
 
-    Epic newEpic(Epic epic);
+    int newEpic(Epic epic);
 
     // 2.5 Обновление. Новая версия объекта с верным идентификатор передаются в виде параметра.
     void updateTask(Task task);
@@ -40,11 +40,11 @@ public interface TaskManager {
     void updateEpic(Epic epic);
 
     // 2.6 Удаление по идентификатору.
-    void delTask(int guid);
+    void delTask(int id);
 
-    void delSubtask(int guid);
+    void delSubtask(int id);
 
-    void delEpic(int guid);
+    void delEpic(int id);
 
     // 3.1 Получение списка всех подзадач определённого эпика.
     Collection<Subtask> getSubtasks(Epic epic);
