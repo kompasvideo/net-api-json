@@ -4,10 +4,10 @@ import ru.yandex.practicum.taskmanager.model.*;
 import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
-    private Map<Integer, Task> tasks = new HashMap();
-    private Map<Integer, Subtask> subTasks = new HashMap();
-    private Map<Integer, Epic> epics = new HashMap();
-    private HistoryManager historyManager;
+    protected Map<Integer, Task> tasks = new HashMap();
+    protected Map<Integer, Subtask> subTasks = new HashMap();
+    protected Map<Integer, Epic> epics = new HashMap();
+    static protected HistoryManager historyManager;
 
     public InMemoryTaskManager(HistoryManager historyManager) {
         this.historyManager = historyManager;
@@ -163,7 +163,7 @@ public class InMemoryTaskManager implements TaskManager {
      * Рассчитываем и устанавливаем статус эпика
      */
     void setStatusEpic(Subtask subtask) {
-        Epic epic = subtask.getParent();
+        Epic epic = getEpic(subtask.getParentId());
         int newStatus = 0;
         int doneStatus = 0;
         int count = getSubtasks(epic).size();
@@ -184,5 +184,9 @@ public class InMemoryTaskManager implements TaskManager {
         } else if (doneStatus == count) {
             epic.setStatus(Status.DONE);
         } else epic.setStatus(Status.IN_PROGRESS);
+    }
+
+    public HistoryManager getHistoryManager() {
+        return historyManager;
     }
 }

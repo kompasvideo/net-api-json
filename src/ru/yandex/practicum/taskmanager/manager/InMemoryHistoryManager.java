@@ -4,15 +4,15 @@ import ru.yandex.practicum.taskmanager.model.Task;
 import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager{
-    private Map<Integer, Node<Task>> map = new HashMap<>();
+    //protected Map<Integer, Node<Task>> map = new HashMap<>();
     /**
      * Pointer to first node.
      */
-    transient Node<Task> first;
+    Node<Task> first;
     /**
      * Pointer to last node.
      */
-    transient Node<Task> last;
+    Node<Task> last;
 
     /**
      * Добавляет Task в History

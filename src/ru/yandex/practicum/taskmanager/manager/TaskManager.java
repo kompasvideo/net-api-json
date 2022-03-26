@@ -2,6 +2,8 @@ package ru.yandex.practicum.taskmanager.manager;
 
 import ru.yandex.practicum.taskmanager.model.*;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public interface TaskManager {
     // 2.1 Получение списка всех задач.
@@ -54,4 +56,6 @@ public interface TaskManager {
     void setStatusTask(Task task, Status status);
 
     void setStatusSubtask(Subtask subtask, Status status);
+
+    HistoryManager getHistoryManager();
 }
