@@ -1,15 +1,19 @@
 package ru.yandex.practicum.taskmanager.manager;
 
+import ru.yandex.practicum.taskmanager.checks.CheckEpics;
+import ru.yandex.practicum.taskmanager.checks.CheckHistory;
+import ru.yandex.practicum.taskmanager.checks.CheckSubTasks;
+import ru.yandex.practicum.taskmanager.checks.CheckTasks;
+import ru.yandex.practicum.taskmanager.exceptions.ManagerSaveException;
 import ru.yandex.practicum.taskmanager.model.*;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
 
-    String fileName;
+    private String fileName;
 
     public FileBackedTasksManager(HistoryManager historyManager, String fileName) {
         super(historyManager);
@@ -80,7 +84,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
     }
 
-    static FileBackedTasksManager loadFromFile(File file) throws ManagerSaveException {
+    static FileBackedTasksManager loadFromFile(File file) {
         HistoryManager historyManager = new InMemoryHistoryManager();
         String fileName = "file.csv";
         FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(historyManager,fileName);
@@ -200,110 +204,18 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         // 3. Создайте новый FileBackedTasksManager менеджер из этого же файла.
         FileBackedTasksManager fileBackedTasksManager = null;
         File file = new File(fileName);
-        try {
-            fileBackedTasksManager = FileBackedTasksManager.loadFromFile(file);
-        } catch (ManagerSaveException ex) {
-            System.out.println(ex.getMessage());
-            ex.printStackTrace();
-        }
+        fileBackedTasksManager = FileBackedTasksManager.loadFromFile(file);
 
         // 4.Проверьте, что история просмотра восстановилась верно и все задачи, эпики, подзадачи,
         // которые были в старом, есть в новом менеджере.
-        chekTasks(manager, fileBackedTasksManager);
-        chekЫгиTasks(manager, fileBackedTasksManager);
-        chekEpics(manager, fileBackedTasksManager);
-        chekHistory(manager, fileBackedTasksManager);
+        CheckTasks.chekTasks(manager, fileBackedTasksManager);
+        CheckSubTasks.chekSubTasks(manager, fileBackedTasksManager);
+        CheckEpics.chekEpics(manager, fileBackedTasksManager);
+        CheckHistory.chekHistory(manager, fileBackedTasksManager);
     }
 
-    // проверка Tasks в старом и новом менеждерах
-    static void chekTasks(TaskManager manager,FileBackedTasksManager fileBackedTasksManager) {
-        String str ="";
-        for (var task:manager.getAllTasks()) {
-            if (str.isEmpty()){
-                str += String.format("%s",task.getId());
-            } else {
-                str += String.format(", %s",task.getId());
-            }
-        }
-        System.out.println("Id задач (Task) в старом менеджере: " + str);
-        str ="";
-        for (var task:fileBackedTasksManager.getAllTasks()) {
-            if (str.isEmpty()){
-                str += String.format("%s",task.getId());
-            } else {
-                str += String.format(", %s",task.getId());
-            }
-        }
-        System.out.println("Id задач (Task) в новом менеджере: " + str);
 
-    }
 
-    // проверка SubTasks в старом и новом менеждерах
-    static void chekЫгиTasks(TaskManager manager,FileBackedTasksManager fileBackedTasksManager) {
-        String str ="";
-        for (var subTask:manager.getAllSubtasks()) {
-            if (str.isEmpty()){
-                str += String.format("%s",subTask.getId());
-            } else {
-                str += String.format(", %s",subTask.getId());
-            }
-        }
-        System.out.println("Id подзадач (SubTask) в старом менеджере: " + str);
-        str ="";
-        for (var subTask : fileBackedTasksManager.getAllSubtasks()) {
-            if (str.isEmpty()){
-                str += String.format("%s",subTask.getId());
-            } else {
-                str += String.format(", %s",subTask.getId());
-            }
-        }
-        System.out.println("Id подзадач (SubTask) в новом менеджере: " + str);
 
-    }
 
-    // проверка Epics в старом и новом менеждерах
-    static void chekEpics(TaskManager manager,FileBackedTasksManager fileBackedTasksManager) {
-        String str ="";
-        for (var epic:manager.getAllEpics()) {
-            if (str.isEmpty()){
-                str += String.format("%s",epic.getId());
-            } else {
-                str += String.format(", %s",epic.getId());
-            }
-        }
-        System.out.println("Id эпиков (Epic) в старом менеджере: " + str);
-        str ="";
-        for (var epic:fileBackedTasksManager.getAllEpics()) {
-            if (str.isEmpty()){
-                str += String.format("%s",epic.getId());
-            } else {
-                str += String.format(", %s",epic.getId());
-            }
-        }
-        System.out.println("Id эпиков (Epic) в новом менеджере: " + str);
-
-    }
-
-    // проверка Epics в старом и новом менеждерах
-    static void chekHistory(TaskManager manager,FileBackedTasksManager fileBackedTasksManager) {
-        String str ="";
-        for (var task : manager.getHistoryManager().getHistory()) {
-            if (str.isEmpty()){
-                str += String.format("%s",task.getId());
-            } else {
-                str += String.format(", %s",task.getId());
-            }
-        }
-        System.out.println("Id задач в старом HistoryManager: " + str);
-        str ="";
-        for (var task:fileBackedTasksManager.getHistoryManager().getHistory()) {
-            if (str.isEmpty()){
-                str += String.format("%s",task.getId());
-            } else {
-                str += String.format(", %s",task.getId());
-            }
-        }
-        System.out.println("Id задач в новом HistoryManager: " + str);
-
-    }
 }
