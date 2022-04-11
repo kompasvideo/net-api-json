@@ -5,10 +5,15 @@ import ru.yandex.practicum.taskmanager.checks.CheckHistory;
 import ru.yandex.practicum.taskmanager.checks.CheckSubTasks;
 import ru.yandex.practicum.taskmanager.checks.CheckTasks;
 import ru.yandex.practicum.taskmanager.exceptions.ManagerSaveException;
+import ru.yandex.practicum.taskmanager.exceptions.ValidationTimeException;
 import ru.yandex.practicum.taskmanager.model.*;
 
 import java.io.*;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
@@ -67,7 +72,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     void save() {
         try (Writer fileWriter = new FileWriter(fileName)) {
-                fileWriter.write("id,type,name,status,description,epic\r\n");
+                fileWriter.write("id,type,name,status,description,epic,startTime,duration\r\n");
             for (Task task: tasks.values()) {
                 fileWriter.write(task.toString(task));
             }
@@ -104,15 +109,27 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     break;
                 }
                 strArray =  str.split(",");
+                LocalDateTime startTime =  LocalDateTime.MIN;
+                if (strArray[6].equals("null")) {
+                    startTime = null;
+                } else {
+                    startTime = LocalDateTime.parse(strArray[6]);
+                }
+                Duration duration = Duration.ZERO;
+                if (strArray[7].equals("null")) {
+                    duration = null;
+                } else {
+                    duration = Duration.parse(strArray[7]);
+                }
                 switch (strArray[1]) {
                     case "TASK":
                         Task task = new Task(Integer.parseInt(strArray[0]), EnumTask.TASK,strArray[2],
-                                getStatus(strArray[3]),strArray[4]);
+                                getStatus(strArray[3]),strArray[4],startTime, duration);
                         fileBackedTasksManager.tasks.put(Integer.parseInt(strArray[0]), task);
                         break;
                     case "SUBTASK":
                         Subtask subtask = new Subtask(Integer.parseInt(strArray[0]), EnumTask.TASK,strArray[2],
-                                getStatus(strArray[3]),strArray[4],Integer.parseInt(strArray[5]));
+                                getStatus(strArray[3]),strArray[4],Integer.parseInt(strArray[5]), startTime, duration);
                         fileBackedTasksManager.subTasks.put(Integer.parseInt(strArray[0]), subtask);
                         break;
                     case "EPIC":
@@ -175,47 +192,64 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
 
     public static void main(String[] args) {
-        String fileName = "file.csv";
+        try {
+            String fileName = "file.csv";
 
-        TaskManager manager = Manager.getDefault(fileName);
-        int id = manager.hashCode();
-        List<Subtask> subtasks = new ArrayList<>();
+            TaskManager manager = Manager.getDefault(fileName);
+            int id = manager.hashCode();
+            List<Subtask> subtasks = new ArrayList<>();
 
-        // 1. Заведите несколько разных задач, эпиков и подзадач.
-        // Создаём 2 задач
-        int taskId = manager.newTask(new Task("Задача 1", "Описание задачи 1", ++id));
-        int task2Id = manager.newTask(new Task("Задача 2", "Описание задачи 2", ++id));
+            // 1. Заведите несколько разных задач, эпиков и подзадач.
+            // Создаём 2 задач
+            int taskId = manager.newTask(new Task("Задача 1", "Описание задачи 1", ++id,
+                    LocalDateTime.of(2022, 7, 1, 9, 0),
+                    Duration.of(1, ChronoUnit.DAYS)));
+            int task2Id = manager.newTask(new Task("Задача 2", "Описание задачи 2", ++id,
+                    LocalDateTime.of(2022, 7, 2, 9, 0),
+                    Duration.of(1, ChronoUnit.DAYS)));
 
-        // создание эпика с 3 подзадачами
-        subtasks.add(manager.newSubtask(new Subtask("Подзадача 1","Описание подзадачи 1",++id)));
-        subtasks.add(manager.newSubtask(new Subtask("Подзадача 2","Описание подзадачи 2",++id)));
-        subtasks.add(manager.newSubtask(new Subtask("Подзадача 3","Описание подзадачи 3",++id)));
-        int epicId = manager.newEpic(new Epic("Эпик 1","Описание эпика 1", ++id, subtasks));
+            // создание эпика с 3 подзадачами
+            subtasks.add(manager.newSubtask(new Subtask("Подзадача 1", "Описание подзадачи 1", ++id,
+                    LocalDateTime.of(2022, 7, 3, 9, 0),
+                    Duration.of(1, ChronoUnit.DAYS))));
+            subtasks.add(manager.newSubtask(new Subtask("Подзадача 2", "Описание подзадачи 2", ++id,
+                    LocalDateTime.of(2022, 7, 4, 9, 0),
+                    Duration.of(1, ChronoUnit.DAYS))));
+            subtasks.add(manager.newSubtask(new Subtask("Подзадача 3", "Описание подзадачи 3", ++id,
+                    LocalDateTime.of(2022, 7, 5, 9, 0),
+                    Duration.of(1, ChronoUnit.DAYS))));
+            int epicId = manager.newEpic(new Epic("Эпик 1", "Описание эпика 1", ++id, subtasks));
 
-        // создание эпика без подзадач
-        subtasks.clear();
-        manager.newEpic(new Epic("Эпик 2","Описание эпика 2", ++id, subtasks));
+            // создание эпика без подзадач
+            subtasks.clear();
+            manager.newEpic(new Epic("Эпик 2", "Описание эпика 2", ++id, subtasks));
 
 
-        // 2. Запросите некоторые из них, чтобы заполнилась история просмотра.
-        manager.getTask(taskId);
-        manager.getEpic(epicId);
+            // 2. Запросите некоторые из них, чтобы заполнилась история просмотра.
+            manager.getTask(taskId);
+            manager.getEpic(epicId);
 
-        // 3. Создайте новый FileBackedTasksManager менеджер из этого же файла.
-        FileBackedTasksManager fileBackedTasksManager = null;
-        File file = new File(fileName);
-        fileBackedTasksManager = FileBackedTasksManager.loadFromFile(file);
+            // 3. Создайте новый FileBackedTasksManager менеджер из этого же файла.
+            FileBackedTasksManager fileBackedTasksManager = null;
+            File file = new File(fileName);
+            fileBackedTasksManager = FileBackedTasksManager.loadFromFile(file);
 
-        // 4.Проверьте, что история просмотра восстановилась верно и все задачи, эпики, подзадачи,
-        // которые были в старом, есть в новом менеджере.
-        CheckTasks.chekTasks(manager, fileBackedTasksManager);
-        CheckSubTasks.chekSubTasks(manager, fileBackedTasksManager);
-        CheckEpics.chekEpics(manager, fileBackedTasksManager);
-        CheckHistory.chekHistory(manager, fileBackedTasksManager);
+            // 4.Проверьте, что история просмотра восстановилась верно и все задачи, эпики, подзадачи,
+            // которые были в старом, есть в новом менеджере.
+            CheckTasks.chekTasks(manager, fileBackedTasksManager);
+            CheckSubTasks.chekSubTasks(manager, fileBackedTasksManager);
+            CheckEpics.chekEpics(manager, fileBackedTasksManager);
+            CheckHistory.chekHistory(manager, fileBackedTasksManager);
+
+            System.out.println("Выведите список задач в порядке приоритета");
+            // Выведите список задач в порядке приоритета
+            Collection<Task> tasks = manager.getPrioritizedTasks();
+            for (Task task : tasks) {
+                System.out.println(task);
+            }
+        }
+        catch (ValidationTimeException e) {
+            System.out.println(e.getMessage());
+        }
     }
-
-
-
-
-
 }

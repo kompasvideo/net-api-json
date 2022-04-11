@@ -1,13 +1,26 @@
 package ru.yandex.practicum.taskmanager.manager;
 
+import ru.yandex.practicum.taskmanager.exceptions.ManagerSaveException;
+import ru.yandex.practicum.taskmanager.exceptions.ValidationTimeException;
 import ru.yandex.practicum.taskmanager.model.*;
+
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
+    Comparator<Task> comparator = new Comparator<Task>() {
+        @Override
+        public int compare(Task o1, Task o2) {
+            return o1.getStartTime().compareTo(o2.getStartTime());
+        }
+    };
+
     protected Map<Integer, Task> tasks = new HashMap();
     protected Map<Integer, Subtask> subTasks = new HashMap();
     protected Map<Integer, Epic> epics = new HashMap();
     static protected HistoryManager historyManager;
+    protected Set<Task> tasksSet = new TreeSet(comparator);
+
 
     public InMemoryTaskManager(HistoryManager historyManager) {
         this.historyManager = historyManager;
@@ -80,16 +93,47 @@ public class InMemoryTaskManager implements TaskManager {
         return epic;
     }
 
+    /** Проверьте пересечения
+     *
+     * @return  true - есть пересечение
+     */
+    boolean getValidateTime(){
+        Task task = null;
+        for (Task t: tasksSet ) {
+            if (task != null) {
+                LocalDateTime l1 = task.getStartTime();
+                LocalDateTime l2 = t.getEndTime();
+                int i =  task.getStartTime().compareTo(t.getEndTime());
+                LocalDateTime l3 = task.getEndTime();
+                LocalDateTime l4 = t.getStartTime();
+                int i2 = task.getEndTime().compareTo(t.getStartTime());
+                if ((task.getStartTime().compareTo(t.getEndTime())<=0)
+                           && (task.getEndTime().compareTo(t.getStartTime()) > 0)){
+                    return true;
+                }
+            }
+            task = t;
+        }
+        return false;
+    }
+
     // 2.4 Создание. Сам объект должен передаваться в качестве параметра.
     @Override
     public int newTask(Task task) {
         tasks.put(task.getId(), task);
+        tasksSet.add(task);
+        if (getValidateTime()) {
+            tasks.remove(task);
+            tasksSet.remove(task);
+            throw new ValidationTimeException("Время не корректно");
+        }
         return task.getId();
     }
 
     @Override
     public Subtask newSubtask(Subtask subtask) {
         subTasks.put(subtask.getId(), subtask);
+        tasksSet.add(subtask);
         return subtask;
     }
 
@@ -118,14 +162,18 @@ public class InMemoryTaskManager implements TaskManager {
     // 2.6 Удаление по идентификатору.
     @Override
     public void delTask(int id) {
+        Task task = getTask(id);
         historyManager.remove(id);
         tasks.remove(id);
+        tasksSet.remove(task);
     }
 
     @Override
     public void delSubtask(int id) {
+        Subtask subtask = getSubtask(id);
         historyManager.remove(id);
         subTasks.remove(id);
+        tasksSet.remove(subtask);
     }
 
     @Override
@@ -188,5 +236,10 @@ public class InMemoryTaskManager implements TaskManager {
 
     public HistoryManager getHistoryManager() {
         return historyManager;
+    }
+
+    @Override
+    public Collection<Task> getPrioritizedTasks() {
+        return tasksSet;
     }
 }

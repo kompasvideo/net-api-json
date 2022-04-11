@@ -1,5 +1,7 @@
 package ru.yandex.practicum.taskmanager.model;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Task {
@@ -9,20 +11,33 @@ public class Task {
     protected Status status;
     protected EnumTask enumTask;
 
-    public Task(String title, String description, int id) {
+    /** продолжительность задачи, оценка того, сколько времени она займёт
+     */
+    protected Duration duration;
+
+    /** дата, когда предполагается приступить к выполнению задачи
+     *
+     */
+    protected LocalDateTime startTime;
+
+    public Task(String title, String description, int id, LocalDateTime startTime, Duration duration) {
         this.title = title;
         this.description = description;
         this.id = id;
         this.status = Status.NEW;
         this.enumTask = EnumTask.TASK;
+        this.startTime = startTime;
+        this.duration= duration;
     }
 
-    public Task(int id, EnumTask enumTask, String title, Status status, String description ) {
+    public Task(int id, EnumTask enumTask, String title, Status status, String description, LocalDateTime startTime, Duration duration ) {
         this.id = id;
         this.enumTask = enumTask;
         this.title = title;
         this.status = status;
         this.description = description;
+        this.startTime = startTime;
+        this.duration= duration;
     }
 
     public String getTitle() {
@@ -65,6 +80,8 @@ public class Task {
                 "\n\t description= " + description +
                 "\n\t id= " + id +
                 "\n\t status= " + status +
+                "\n\t startTime= " + startTime +
+                "\n\t duration= " + duration +
                 "\n\t}";
     }
 
@@ -83,8 +100,8 @@ public class Task {
 
     // Напишите метод сохранения задачи в строку String toString(Task task) или переопределите базовый.
     public String toString(Task task) {
-        return String.format("%d,%s,%s,%s,%s,%s\r\n", task.id,task.enumTask, task.title,task.status,
-                task.description,"");
+        return String.format("%d,%s,%s,%s,%s,%s,%s,%s\r\n", task.id,task.enumTask, task.title,task.status,
+                task.description,"",task.startTime, task.duration);
     }
 
     // Напишите метод создания задачи из строки Task fromString(String value).
@@ -127,7 +144,23 @@ public class Task {
             default:
                 System.out.println("Ошибка 2 в Task: public Task fromString(String value) ");
         }
-        return new Task(id, enumTask, strArray[2], status,strArray[4]);
+        LocalDateTime startTime =  LocalDateTime.parse(strArray[4]);
+        Duration duration = Duration.parse(strArray[5]);
+        return new Task(id, enumTask, strArray[2], status,strArray[4], startTime, duration);
     }
 
+    /** время завершения задачи, которое рассчитывается исходя из startTime и duration
+     * @return LocalDateTime
+     */
+    public  LocalDateTime getEndTime() {
+        return  startTime.plus(duration);
+    }
+
+    public  LocalDateTime getStartTime() {
+        return  startTime;
+    }
+
+    public  Duration getDuration() {
+        return  duration;
+    }
 }

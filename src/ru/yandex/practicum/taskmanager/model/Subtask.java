@@ -3,16 +3,20 @@ package ru.yandex.practicum.taskmanager.model;
 
 import ru.yandex.practicum.taskmanager.manager.TaskManager;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 public class Subtask extends Task {
     private int epicId;
 
-    public Subtask(String title, String description, int id) {
-        super(title, description, id);
+    public Subtask(String title, String description, int id, LocalDateTime startTime, Duration duration) {
+        super(title, description, id, startTime, duration);
         this.enumTask = EnumTask.SUBTASK;
     }
 
-    public Subtask(int id, EnumTask enumTask, String title, Status status, String description, int epicId ) {
-        super(id, enumTask, title, status, description);
+    public Subtask(int id, EnumTask enumTask, String title, Status status, String description, int epicId,
+            LocalDateTime startTime, Duration duration) {
+        super(id, enumTask, title, status, description, startTime, duration);
         this.epicId = epicId;
     }
 
@@ -23,6 +27,8 @@ public class Subtask extends Task {
                 "\n\t description= " + description +
                 "\n\t id= " + id +
                 "\n\t status= " + status +
+                "\n\t startTime= " + startTime +
+                "\n\t duration= " + duration +
                 "\n\t}";
     }
 
@@ -37,8 +43,8 @@ public class Subtask extends Task {
     // Напишите метод сохранения задачи в строку String toString(Task task) или переопределите базовый.
     @Override
     public String toString(Task task) {
-        return String.format("%d,%s,%s,%s,%s,%s\r\n", task.id,task.enumTask, task.title,task.status,
-                task.description,((Subtask)task).getParentId());
+        return String.format("%d,%s,%s,%s,%s,%s,%s,%s\r\n", task.id,task.enumTask, task.title,task.status,
+                task.description,((Subtask)task).getParentId(), task.startTime, task.duration);
     }
 
     // Напишите метод создания задачи из строки Task fromString(String value).
@@ -91,6 +97,8 @@ public class Subtask extends Task {
         {
             System.out.println("NumberFormatException 2: " + nfe.getMessage());
         }
-        return new Subtask(id, enumTask, strArray[2], status,strArray[4], iParent);
+        LocalDateTime startTime =  LocalDateTime.parse(strArray[6]);
+        Duration duration = Duration.parse(strArray[7]);
+        return new Subtask(id, enumTask, strArray[2], status,strArray[4], iParent, startTime, duration);
     }
 }

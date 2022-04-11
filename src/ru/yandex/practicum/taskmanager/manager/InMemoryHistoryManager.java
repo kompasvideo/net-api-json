@@ -22,6 +22,27 @@ public class InMemoryHistoryManager implements HistoryManager{
         linkLast(task);
     }
 
+    /**
+     * Отображает последние просмотренные пользователем задачи
+     */
+    @Override
+    public List<Task> getHistory() {
+        return getTasks();
+    }
+
+    /**
+     * Удаляет задачу по номеру задачи
+     * @param taskId - номер задачи
+     */
+    @Override
+    public void remove(int taskId){
+        if (map.size() > 0) {
+            Node<Task> old = map.get(taskId);
+            removeNode(old);
+        }
+    }
+
+
     void linkLast(Task e) {
         if (map.containsKey(e.getId())) {
             Node<Task> old = map.get(e.getId());
@@ -41,13 +62,6 @@ public class InMemoryHistoryManager implements HistoryManager{
         map.put(e.getId(), last);
     }
 
-    /**
-     * Отображает последние просмотренные пользователем задачи
-     */
-    @Override
-    public List<Task> getHistory() {
-        return getTasks();
-    }
 
     List<Task> getTasks() {
         List<Task> tasks = new ArrayList<>();
@@ -59,28 +73,20 @@ public class InMemoryHistoryManager implements HistoryManager{
         return tasks;
     }
 
-    /**
-     * Удаляет задачу по номеру задачи
-     * @param taskId - номер задачи
-     */
-    @Override
-    public void remove(int taskId){
-        Node<Task> old = map.get(taskId);
-        removeNode(old);
-    }
-
     boolean removeNode(Node<Task> e) {
-        final Node<Task> prev = e.prev;
-        final Node<Task> next = e.next;
-        if (next != null) {
-            next.prev = prev;
-        } else {
-            last = prev;
-        }
-        if (prev != null) {
-            prev.next = next;
-        } else {
-            first = next;
+        if (e != null) {
+            final Node<Task> prev = e.prev;
+            final Node<Task> next = e.next;
+            if (next != null) {
+                next.prev = prev;
+            } else {
+                last = prev;
+            }
+            if (prev != null) {
+                prev.next = next;
+            } else {
+                first = next;
+            }
         }
         return true;
     }

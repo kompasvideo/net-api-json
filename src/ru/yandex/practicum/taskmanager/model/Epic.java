@@ -1,5 +1,7 @@
 package ru.yandex.practicum.taskmanager.model;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -15,17 +17,21 @@ public class Epic extends Task {
                 "\n\t id= " + id +
                 "\n\t status= " + status +
                 "\n\t subtasks= " + subtasks +
+                "\n\t startTime= " + startTime +
+                "\n\t duration= " + duration +
                 "\n\t}";
     }
 
     public Epic(String title, String description, int id){
-        super(title, description, id);
+        super(title, description, id, null, null);
         this.enumTask = EnumTask.EPIC;
+        calculateStartTime();
+        calculateDuration();
     }
 
     // Collection не везде подходит, у него нет метода get(index)
     public Epic(String title, String description, int id, List<Subtask> subtasks){
-        super(title, description, id);
+        super(title, description, id, null, null);
         this.enumTask = EnumTask.EPIC;
         if (subtasks != null) {
             for (int i = 0; i < subtasks.size(); i++) {
@@ -34,6 +40,42 @@ public class Epic extends Task {
                 this.subtasks.add(subtask);
             }
         }
+        calculateStartTime();
+        calculateDuration();
+    }
+
+    void calculateStartTime() {
+        LocalDateTime startTime = null;
+        for (Subtask subtask: subtasks ) {
+            if (startTime == null) {
+                startTime = subtask.startTime;
+            } else {
+                if ((subtask.startTime).compareTo(startTime) == -1) {
+                    startTime = subtask.startTime;
+                }
+            }
+        }
+        this.startTime = startTime;
+    }
+
+    void calculateDuration(){
+        LocalDateTime startTimeMore = null;
+        Duration duration = null;
+        if (subtasks.size() == 0)
+            return;
+        for (Subtask subtask: subtasks ) {
+            if (startTimeMore == null) {
+                startTimeMore = subtask.startTime;
+            } else {
+                //int i = (subtask.startTime).compareTo(startTimeMore);
+                if ((subtask.startTime).compareTo(startTimeMore) == 1) {
+                    startTimeMore = subtask.startTime;
+                    duration = subtask.duration;
+                }
+            }
+        }
+        startTimeMore = startTimeMore.plus(duration);
+        this.duration = Duration.between(startTime, startTimeMore);
     }
 
     public Collection<Subtask> getSubtasks() {
@@ -55,8 +97,8 @@ public class Epic extends Task {
 
     // Напишите метод сохранения задачи в строку String toString(Task task) или переопределите базовый.
     public String toString(Task task) {
-        return String.format("%d,%s,%s,%s,%s,%s\r\n", task.id,task.enumTask, task.title,task.status,
-                task.description,"");
+        return String.format("%d,%s,%s,%s,%s,%s,%s,%s\r\n", task.id,task.enumTask, task.title,task.status,
+                task.description,"",task.startTime,task.duration);
     }
 
     // Напишите метод создания задачи из строки Task fromString(String value).
@@ -99,7 +141,19 @@ public class Epic extends Task {
             default:
                 System.out.println("Ошибка 2 в Epic: public Task fromString(String value) ");
         }
-        return new Task(id, enumTask, strArray[2], status,strArray[4]);
+        LocalDateTime startTime =  LocalDateTime.MIN;
+        if (strArray[5] == "null") {
+            startTime = null;
+        } else {
+            startTime = LocalDateTime.parse(strArray[5]);
+        }
+        Duration duration = Duration.ZERO;
+        if (strArray[6] == "null") {
+            duration = null;
+        } else {
+            duration = Duration.parse(strArray[6]);
+        }
+        return new Task(id, enumTask, strArray[2], status,strArray[4], startTime, duration);
     }
 
     public void addSubtask( Subtask subtask) {

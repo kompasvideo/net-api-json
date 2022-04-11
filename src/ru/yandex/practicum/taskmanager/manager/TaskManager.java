@@ -1,6 +1,8 @@
 package ru.yandex.practicum.taskmanager.manager;
 
 import ru.yandex.practicum.taskmanager.model.*;
+
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -58,4 +60,6 @@ public interface TaskManager {
     void setStatusSubtask(Subtask subtask, Status status);
 
     HistoryManager getHistoryManager();
+
+    Collection<Task> getPrioritizedTasks();
 }
