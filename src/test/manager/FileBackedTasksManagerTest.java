@@ -2,18 +2,8 @@ package test.manager;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.yandex.practicum.taskmanager.exceptions.ValidationTimeException;
 import ru.yandex.practicum.taskmanager.manager.Manager;
-import ru.yandex.practicum.taskmanager.manager.TaskManager;
-import ru.yandex.practicum.taskmanager.model.Epic;
-import ru.yandex.practicum.taskmanager.model.Status;
-import ru.yandex.practicum.taskmanager.model.Subtask;
-import ru.yandex.practicum.taskmanager.model.Task;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class FileBackedTasksManagerTest extends TaskManagerTest {
 
@@ -25,7 +15,7 @@ class FileBackedTasksManagerTest extends TaskManagerTest {
     }
 
     @Test
-    void getAllTasksTest() {
+    void getAllTasksTest() throws ValidationTimeException {
         super.getAllTasksTest();
     }
 
@@ -40,7 +30,7 @@ class FileBackedTasksManagerTest extends TaskManagerTest {
     }
 
     @Test
-    void delAllTasksTest() {
+    void delAllTasksTest() throws ValidationTimeException {
         super.delAllTasksTest();
     }
 
@@ -55,7 +45,7 @@ class FileBackedTasksManagerTest extends TaskManagerTest {
     }
 
     @Test
-    void getTaskTest() {
+    void getTaskTest() throws ValidationTimeException {
         super.getTaskTest();
     }
 
@@ -70,7 +60,7 @@ class FileBackedTasksManagerTest extends TaskManagerTest {
     }
 
     @Test
-    void newTaskTest() {
+    void newTaskTest() throws ValidationTimeException {
         super.newTaskTest();
     }
 
@@ -85,7 +75,7 @@ class FileBackedTasksManagerTest extends TaskManagerTest {
     }
 
     @Test
-    void updateTaskTest() {
+    void updateTaskTest() throws ValidationTimeException {
         super.updateTaskTest();
     }
 
@@ -100,7 +90,7 @@ class FileBackedTasksManagerTest extends TaskManagerTest {
     }
 
     @Test
-    void delTaskTest() {
+    void delTaskTest() throws ValidationTimeException {
         super.delTaskTest();
     }
 
@@ -120,7 +110,7 @@ class FileBackedTasksManagerTest extends TaskManagerTest {
     }
 
     @Test
-    void setStatusTaskTest() {
+    void setStatusTaskTest() throws ValidationTimeException {
         super.setStatusTaskTest();
     }
 
@@ -130,7 +120,7 @@ class FileBackedTasksManagerTest extends TaskManagerTest {
     }
 
     @Test
-    void getTaskTimeTest() {
+    void getTaskTimeTest() throws ValidationTimeException {
         super.getTaskTimeTest();
     }
 

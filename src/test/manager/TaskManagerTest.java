@@ -1,6 +1,7 @@
 package test.manager;
 
 import org.junit.jupiter.api.Test;
+import ru.yandex.practicum.taskmanager.exceptions.ValidationTimeException;
 import ru.yandex.practicum.taskmanager.manager.TaskManager;
 import ru.yandex.practicum.taskmanager.model.Epic;
 import ru.yandex.practicum.taskmanager.model.Status;
@@ -19,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public abstract class TaskManagerTest<T extends TaskManager> {
     protected TaskManager manager;
 
-    void createTasks(){
+    void createTasks() throws ValidationTimeException {
         // Создаём 2 задач
         manager.newTask(new Task("Задача 1", "Описание задачи 1", 1,
                 LocalDateTime.of(2022,7,1,8,0),
@@ -77,7 +78,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void getAllTasksTest() {
+    void getAllTasksTest() throws ValidationTimeException {
         List<Task> tasksPrepare = new ArrayList<>();
         tasksPrepare.add(new Task("Задача 1", "Описание задачи 1", 1,
                 LocalDateTime.of(2022,7,1,9,0),
@@ -138,7 +139,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void delAllTasksTest() {
+    void delAllTasksTest() throws ValidationTimeException {
         createTasks();
         manager.delAllTasks();
         assertEquals(0,manager.getAllTasks().size(), "Неверное количество задач.");
@@ -162,7 +163,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void getTaskTest() {
+    void getTaskTest() throws ValidationTimeException {
         Task taskPrepare = new Task("Задача 1", "Описание задачи 1", 1,
                 LocalDateTime.of(2022,7,1,9,0),
                 Duration.of(1, ChronoUnit.DAYS));
@@ -210,7 +211,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void newTaskTest() {
+    void newTaskTest() throws ValidationTimeException {
         Task taskPrepare = new Task("Задача 1", "Описание задачи 1", 1,
                 LocalDateTime.of(2022,7,1,9,0),
                 Duration.of(1, ChronoUnit.DAYS));
@@ -263,7 +264,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void updateTaskTest() {
+    void updateTaskTest() throws ValidationTimeException {
         Task taskPrepare = new Task("Задача 3", "Описание задачи 3", 1,
                 LocalDateTime.of(2022,7,1,9,0),
                 Duration.of(1, ChronoUnit.DAYS));
@@ -322,7 +323,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void delTaskTest() {
+    void delTaskTest() throws ValidationTimeException {
         createTasks(); // создание 2 задач
         manager.delTask(1);
 
@@ -370,7 +371,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void setStatusTaskTest() {
+    void setStatusTaskTest() throws ValidationTimeException {
         Task taskPrepare = new Task("Задача 1", "Описание задачи 1", 1,
                 LocalDateTime.of(2022,7,1,9,0),
                 Duration.of(1, ChronoUnit.DAYS));
@@ -395,7 +396,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void getTaskTimeTest() {
+    void getTaskTimeTest() throws ValidationTimeException {
         Task taskPrepare = new Task("Задача 1", "Описание задачи 1", 1,
                 LocalDateTime.of(2022,7,1,9,0),
                 Duration.of(1, ChronoUnit.DAYS));

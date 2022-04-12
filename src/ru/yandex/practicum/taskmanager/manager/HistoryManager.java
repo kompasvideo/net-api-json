@@ -20,45 +20,15 @@ public interface HistoryManager {
 
     Map<Integer, Node<Task>> map = new HashMap<>();
 
-    // Напишите статические методы static String toString(HistoryManager manager)
-    static String toString(HistoryManager manager) {
-        String str ="";
-        Node<Task> first = null;
-        for (Node<Task> node: map.values()) {
-            if (node.prev == null) {
-                first = node;
-                break;
-            }
-        }
-        if (first == null) {
-            return str;
-        }
-        Node<Task> next = first;
-        while (true) {
-            if (str.equals("")) {
-                str += next.item.getId();
-            } else {
-                str += "," + next.item.getId();
-            }
-            next = next.next;
-            if (next == null) {
-                break;
-            }
-        }
-        return str;
-    }
+
+    String toString(HistoryManager manager);
 
     // и static List<Integer> fromString(String value) для сохранения и восстановления менеджера истории из CSV.
     static List<Integer> fromString(String value) {
         String[] mas = value.split(",");
         List<Integer> list = new ArrayList<>();
-        try {
-            for (String str : mas) {
-                list.add(Integer.parseInt(str));
-            }
-        } catch (Exception ex) {
-            System.out.println("Ошибка 1");
-            ex.printStackTrace();
+        for (String str : mas) {
+            list.add(Integer.parseInt(str));
         }
         return list;
     }

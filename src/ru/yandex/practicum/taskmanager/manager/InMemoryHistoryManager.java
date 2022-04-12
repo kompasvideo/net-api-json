@@ -90,4 +90,32 @@ public class InMemoryHistoryManager implements HistoryManager{
         }
         return true;
     }
+
+    // Напишите статические методы static String toString(HistoryManager manager)
+    public String toString(HistoryManager manager) {
+        String str ="";
+        Node<Task> first = null;
+        for (Node<Task> node: map.values()) {
+            if (node.prev == null) {
+                first = node;
+                break;
+            }
+        }
+        if (first == null) {
+            return str;
+        }
+        Node<Task> next = first;
+        while (true) {
+            if (str.equals("")) {
+                str += next.item.getId();
+            } else {
+                str += "," + next.item.getId();
+            }
+            next = next.next;
+            if (next == null) {
+                break;
+            }
+        }
+        return str;
+    }
 }

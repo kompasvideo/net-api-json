@@ -119,7 +119,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     // 2.4 Создание. Сам объект должен передаваться в качестве параметра.
     @Override
-    public int newTask(Task task) {
+    public int newTask(Task task) throws ValidationTimeException {
         tasks.put(task.getId(), task);
         tasksSet.add(task);
         if (getValidateTime()) {

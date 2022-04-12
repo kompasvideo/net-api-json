@@ -49,7 +49,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     // 2.4 Создание. Сам объект должен передаваться в качестве параметра.
     @Override
-    public int newTask(Task task) {
+    public int newTask(Task task) throws ValidationTimeException {
         int id = super.newTask(task);
         save();
         return id;
@@ -83,11 +83,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 }
             }
             fileWriter.write("\r\n");
-            fileWriter.write(HistoryManager.toString(historyManager));
+            fileWriter.write(historyManager.toString(historyManager));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
 
     static FileBackedTasksManager loadFromFile(File file) {
         HistoryManager historyManager = new InMemoryHistoryManager();

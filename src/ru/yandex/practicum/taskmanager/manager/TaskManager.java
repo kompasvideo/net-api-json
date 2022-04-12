@@ -1,5 +1,6 @@
 package ru.yandex.practicum.taskmanager.manager;
 
+import ru.yandex.practicum.taskmanager.exceptions.ValidationTimeException;
 import ru.yandex.practicum.taskmanager.model.*;
 
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ public interface TaskManager {
     Epic getEpic(int id);
 
     // 2.4 Создание. Сам объект должен передаваться в качестве параметра.
-    int newTask(Task task);
+    int newTask(Task task) throws ValidationTimeException;
 
     Subtask newSubtask(Subtask subtask);
 
