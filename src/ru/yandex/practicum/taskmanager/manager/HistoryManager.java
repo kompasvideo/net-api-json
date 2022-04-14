@@ -20,17 +20,5 @@ public interface HistoryManager {
 
     Map<Integer, Node<Task>> map = new HashMap<>();
 
-
     String toString(HistoryManager manager);
-
-    // и static List<Integer> fromString(String value) для сохранения и восстановления менеджера истории из CSV.
-    static List<Integer> fromString(String value) {
-        String[] mas = value.split(",");
-        List<Integer> list = new ArrayList<>();
-        for (String str : mas) {
-            list.add(Integer.parseInt(str));
-        }
-        return list;
-    }
-
 }

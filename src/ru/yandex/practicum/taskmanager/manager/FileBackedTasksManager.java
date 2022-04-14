@@ -142,7 +142,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             }
             addSubtasksToEpic(fileBackedTasksManager);
             str = bufReader.readLine();
-            List<Integer> ids = HistoryManager.fromString(str);
+            List<Integer> ids = FileBackedTasksManager.fromString(str);
             addTasksToHistory(ids, fileBackedTasksManager);
         } catch (IOException e) {
             //e.printStackTrace();
@@ -150,6 +150,23 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
         return fileBackedTasksManager;
     }
+
+    //    из задания на ФП спринта 5
+    //    Как сохранять задачи в файл и считывать их из него
+    //    Создайте enum с типами задач.
+    //    Напишите метод сохранения задачи в строку String toString(Task task) или переопределите базовый.
+    //    Напишите метод создания задачи из строки Task fromString(String value).
+    //    Напишите статические методы static String toString(HistoryManager manager) и static List<Integer>
+    //    fromString(String value) для сохранения и восстановления менеджера истории из CSV.
+    static List<Integer> fromString(String value) {
+        String[] mas = value.split(",");
+        List<Integer> list = new ArrayList<>();
+        for (String str : mas) {
+            list.add(Integer.parseInt(str));
+        }
+        return list;
+    }
+
 
     static Status getStatus(String str) {
         switch (str) {
