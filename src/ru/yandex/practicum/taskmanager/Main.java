@@ -39,8 +39,8 @@ public class Main {
             int epicId = manager.newEpic(new Epic("Эпик 1", "Описание эпика 1", ++id, subtasks));
 
             // создание эпика без подзадач
-            subtasks.clear();
-            manager.newEpic(new Epic("Эпик 2", "Описание эпика 2", ++id, subtasks));
+            //subtasks.clear();
+            //manager.newEpic(new Epic("Эпик 2", "Описание эпика 2", ++id, subtasks));
 
             for (Epic epic : manager.getAllEpics()) {
                 System.out.println(epic);
@@ -95,12 +95,12 @@ public class Main {
 
             System.out.println("\nУдаляем задачу");
             System.out.println(taskId);
-            manager.delTask(taskId);
+            //manager.delTask(taskId);
             viewHisory();
 
             System.out.println("\nУдаляем эпик");
             System.out.println(epicId);
-            manager.delEpic(epicId);
+            //manager.delEpic(epicId);
             viewHisory();
         }
         catch (ValidationTimeException e) {

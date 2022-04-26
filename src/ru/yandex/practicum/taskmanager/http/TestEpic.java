@@ -1,11 +1,14 @@
-package ru.yandex.practicum.taskmanager.manager;
+package ru.yandex.practicum.taskmanager.http;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import ru.yandex.practicum.taskmanager.checks.CheckEpics;
 import ru.yandex.practicum.taskmanager.checks.CheckHistory;
 import ru.yandex.practicum.taskmanager.checks.CheckSubTasks;
 import ru.yandex.practicum.taskmanager.checks.CheckTasks;
 import ru.yandex.practicum.taskmanager.exceptions.ManagerSaveException;
 import ru.yandex.practicum.taskmanager.exceptions.ValidationTimeException;
+import ru.yandex.practicum.taskmanager.manager.*;
 import ru.yandex.practicum.taskmanager.model.*;
 
 import java.io.*;
@@ -16,11 +19,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class FileBackedTasksManager extends InMemoryTaskManager {
+public class TestEpic extends InMemoryTaskManager {
 
     private String fileName;
 
-    public FileBackedTasksManager(HistoryManager historyManager, String fileName) {
+    public TestEpic(HistoryManager historyManager, String fileName) {
         super(historyManager);
         this.fileName = fileName;
         loadFromFile();
@@ -73,7 +76,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     void save() {
         try (Writer fileWriter = new FileWriter(fileName)) {
-                fileWriter.write("id,type,name,status,description,epic,startTime,duration\r\n");
+            fileWriter.write("id,type,name,status,description,epic,startTime,duration\r\n");
             for (Task task: tasks.values()) {
                 fileWriter.write(task.toString(task));
             }
@@ -91,10 +94,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
 
-    static FileBackedTasksManager loadFromFile(File file) {
+    static ru.yandex.practicum.taskmanager.manager.FileBackedTasksManager loadFromFile(File file) {
         HistoryManager historyManager = new InMemoryHistoryManager();
         String fileName = "file.csv";
-        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(historyManager,fileName);
+        ru.yandex.practicum.taskmanager.manager.FileBackedTasksManager fileBackedTasksManager = new ru.yandex.practicum.taskmanager.manager.FileBackedTasksManager(historyManager,fileName);
 
         BufferedReader bufReader = null;
         try (Reader fileReader = new FileReader(fileName)) {
@@ -143,7 +146,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             }
             addSubtasksToEpic(fileBackedTasksManager);
             str = bufReader.readLine();
-            List<Integer> ids = FileBackedTasksManager.fromString(str);
+            List<Integer> ids = fromString(str);
             addTasksToHistory(ids, fileBackedTasksManager);
         } catch (IOException e) {
             //e.printStackTrace();
@@ -200,7 +203,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             }
             addSubtasksToEpic();
             str = bufReader.readLine();
-            List<Integer> ids = FileBackedTasksManager.fromString(str);
+            List<Integer> ids = fromString(str);
             addTasksToHistory(ids);
         } catch (IOException e) {
             //e.printStackTrace();
@@ -241,7 +244,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
      * Создаёт заново историю просмотра
      * @param ids
      */
-    static void addTasksToHistory(List<Integer> ids, FileBackedTasksManager fileBackedTasksManager) {
+    static void addTasksToHistory(List<Integer> ids, ru.yandex.practicum.taskmanager.manager.FileBackedTasksManager fileBackedTasksManager) {
         for (int id: ids ) {
             if (fileBackedTasksManager.tasks.containsKey(id)) {
                 historyManager.add(fileBackedTasksManager.tasks.get(id));
@@ -272,7 +275,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     /**
      * Добавляет Subtasks в Epic
      */
-    static void addSubtasksToEpic( FileBackedTasksManager fileBackedTasksManager) {
+    static void addSubtasksToEpic( ru.yandex.practicum.taskmanager.manager.FileBackedTasksManager fileBackedTasksManager) {
         for (Subtask subtask : fileBackedTasksManager.subTasks.values() ) {
             Epic epic = fileBackedTasksManager.getEpic(subtask.getParentId());
             epic.addSubtask(subtask);
@@ -291,60 +294,44 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             String fileName = "file.csv";
 
             TaskManager manager = Manager.getDefault(fileName);
-            int id = manager.hashCode();
-            List<Subtask> subtasks = new ArrayList<>();
-
-            // 1. Заведите несколько разных задач, эпиков и подзадач.
-            // Создаём 2 задач
-            int taskId = manager.newTask(new Task("Задача 1", "Описание задачи 1", ++id,
-                    LocalDateTime.of(2022, 7, 1, 9, 0),
-                    Duration.of(1, ChronoUnit.DAYS)));
-            int task2Id = manager.newTask(new Task("Задача 2", "Описание задачи 2", ++id,
-                    LocalDateTime.of(2022, 7, 2, 9, 0),
-                    Duration.of(1, ChronoUnit.DAYS)));
-
-            // создание эпика с 3 подзадачами
-            subtasks.add(manager.newSubtask(new Subtask("Подзадача 1", "Описание подзадачи 1", ++id,
-                    LocalDateTime.of(2022, 7, 3, 9, 0),
-                    Duration.of(1, ChronoUnit.DAYS))));
-            subtasks.add(manager.newSubtask(new Subtask("Подзадача 2", "Описание подзадачи 2", ++id,
-                    LocalDateTime.of(2022, 7, 4, 9, 0),
-                    Duration.of(1, ChronoUnit.DAYS))));
-            subtasks.add(manager.newSubtask(new Subtask("Подзадача 3", "Описание подзадачи 3", ++id,
-                    LocalDateTime.of(2022, 7, 5, 9, 0),
-                    Duration.of(1, ChronoUnit.DAYS))));
-            int epicId = manager.newEpic(new Epic("Эпик 1", "Описание эпика 1", ++id, subtasks));
-
-            // создание эпика без подзадач
-            subtasks.clear();
-            manager.newEpic(new Epic("Эпик 2", "Описание эпика 2", ++id, subtasks));
+//            List<Subtask> subtasks = new ArrayList<>();
+//            // создание эпика с 3 подзадачами
+//            subtasks.add(manager.newSubtask(new Subtask("Подзадача 1", "Описание подзадачи 1", 1,
+//                    LocalDateTime.of(2022, 7, 3, 9, 0),
+//                    Duration.of(1, ChronoUnit.DAYS))));
+//            subtasks.add(manager.newSubtask(new Subtask("Подзадача 2", "Описание подзадачи 2", 2,
+//                    LocalDateTime.of(2022, 7, 4, 9, 0),
+//                    Duration.of(1, ChronoUnit.DAYS))));
+//            subtasks.add(manager.newSubtask(new Subtask("Подзадача 3", "Описание подзадачи 3", 3,
+//                    LocalDateTime.of(2022, 7, 5, 9, 0),
+//                    Duration.of(1, ChronoUnit.DAYS))));
+//            int epicId = manager.newEpic(new Epic("Эпик 1", "Описание эпика 1", 4, subtasks));
+//
+//            // создание эпика без подзадач
+//            subtasks.clear();
+//            manager.newEpic(new Epic("Эпик 2", "Описание эпика 2", 5, subtasks));
 
 
-            // 2. Запросите некоторые из них, чтобы заполнилась история просмотра.
-            manager.getTask(taskId);
-            manager.getEpic(epicId);
+            String response;
+            Gson gson;
+            GsonBuilder gsonBuilder = new GsonBuilder();
+            gson = new GsonBuilder().
+                    registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).create();
+            Collection<Epic> epics = manager.getAllEpics();
+            System.out.println(epics);
+            Collection<Task> tasks = manager.getAllTasks();
+            System.out.println(tasks);
+            response = gson.toJson(tasks);
+            Collection<Subtask> subtasks = manager.getAllSubtasks();
+            System.out.println(subtasks);
+            response = gson.toJson(subtasks);
+            //epics.
+            response = gson.toJson(epics);
 
-            // 3. Создайте новый FileBackedTasksManager менеджер из этого же файла.
-            FileBackedTasksManager fileBackedTasksManager = null;
-            File file = new File(fileName);
-            fileBackedTasksManager = FileBackedTasksManager.loadFromFile(file);
-
-            // 4.Проверьте, что история просмотра восстановилась верно и все задачи, эпики, подзадачи,
-            // которые были в старом, есть в новом менеджере.
-            CheckTasks.chekTasks(manager, fileBackedTasksManager);
-            CheckSubTasks.chekSubTasks(manager, fileBackedTasksManager);
-            CheckEpics.chekEpics(manager, fileBackedTasksManager);
-            CheckHistory.chekHistory(manager, fileBackedTasksManager);
-
-            System.out.println("Выведите список задач в порядке приоритета");
-            // Выведите список задач в порядке приоритета
-            Collection<Task> tasks = manager.getPrioritizedTasks();
-            for (Task task : tasks) {
-                System.out.println(task);
-            }
         }
-        catch (ValidationTimeException e) {
+        catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
 }
+

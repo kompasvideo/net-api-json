@@ -15,9 +15,9 @@ public class InMemoryTaskManager implements TaskManager {
         }
     };
 
-    protected Map<Integer, Task> tasks = new HashMap();
-    protected Map<Integer, Subtask> subTasks = new HashMap();
-    protected Map<Integer, Epic> epics = new HashMap();
+    public Map<Integer, Task> tasks = new HashMap();
+    public Map<Integer, Subtask> subTasks = new HashMap();
+    public Map<Integer, Epic> epics = new HashMap();
     static protected HistoryManager historyManager;
     protected Set<Task> tasksSet = new TreeSet(comparator);
 
