@@ -101,7 +101,7 @@ public class TaskManagerHttpServerTest {
 
     @Test
     void GetAllEpicsTest() throws IOException {
-        String fileName = "file2.csv";
+        String fileName = "file.csv";
         HttpTaskServer server = new HttpTaskServer( fileName);
         server.startServer();
         URI url = URI.create("http://localhost:8080/tasks/epic/");
@@ -137,6 +137,68 @@ public class TaskManagerHttpServerTest {
                 assertEquals(epic.getDuration(), epic2.getDuration());
             }
         }
+        server.serverStop();
+    }
+
+    @Test
+    void GetTaskTest() throws IOException {
+        String fileName = "file2.csv";
+        HttpTaskServer server = new HttpTaskServer( fileName);
+        server.startServer();
+        URI url = URI.create("http://localhost:8080/tasks/task/?id=1211888641");
+        Task task1 =  new Task("Задача 1", "Описание задачи 1", 1211888641,
+                LocalDateTime.of(2022, 7, 1, 9, 0),
+                Duration.of(1, ChronoUnit.DAYS));
+        Task task = returnTask(url);
+        assertEquals(task.getTitle(), task1.getTitle());
+        assertEquals(task.getDescription(), task1.getDescription());
+        assertEquals(task.getStatus(), task1.getStatus());
+        assertEquals(task.getStartTime().toString(), task1.getStartTime().toString());
+        assertEquals(task.getDuration(), task1.getDuration());
+        server.serverStop();
+    }
+
+    @Test
+    void GetSubTaskTest() throws IOException {
+        String fileName = "file2.csv";
+        HttpTaskServer server = new HttpTaskServer( fileName);
+        server.startServer();
+        URI url = URI.create("http://localhost:8080/tasks/subtask/?id=1211888643");
+        Subtask subtask1 = new Subtask("Подзадача 1", "Описание подзадачи 1", 1211888643,
+                LocalDateTime.of(2022, 7, 3, 9, 0),
+                Duration.of(1, ChronoUnit.DAYS));
+        Subtask subtask = returnSubtask(url);
+        assertEquals(subtask.getTitle(), subtask1.getTitle());
+        assertEquals(subtask.getDescription(), subtask1.getDescription());
+        assertEquals(subtask.getStatus(), subtask1.getStatus());
+        assertEquals(subtask.getStartTime().toString(), subtask1.getStartTime().toString());
+        assertEquals(subtask.getDuration(), subtask1.getDuration());
+        server.serverStop();
+    }
+
+    @Test
+    void GetEpicTest() throws IOException {
+        String fileName = "file2.csv";
+        HttpTaskServer server = new HttpTaskServer( fileName);
+        server.startServer();
+        URI url = URI.create("http://localhost:8080/tasks/epic/?id=1211888646");
+        List<Subtask> subtasksTest = new ArrayList<>();
+        subtasksTest.add(new Subtask("Подзадача 1", "Описание подзадачи 1", 1211888643,
+                LocalDateTime.of(2022, 7, 3, 9, 0),
+                Duration.of(1, ChronoUnit.DAYS)));
+        subtasksTest.add(new Subtask("Подзадача 2", "Описание подзадачи 2", 1211888644,
+                LocalDateTime.of(2022, 7, 4, 9, 0),
+                Duration.of(1, ChronoUnit.DAYS)));
+        subtasksTest.add(new Subtask("Подзадача 3", "Описание подзадачи 3", 1211888645,
+                LocalDateTime.of(2022, 7, 5, 9, 0),
+                Duration.of(1, ChronoUnit.DAYS)));
+        Epic epic1 = new Epic("Эпик 1", "Описание эпика 1", 1211888646, subtasksTest);
+        Epic epic = returnEpic(url);
+        assertEquals(epic.getTitle(), epic1.getTitle());
+        assertEquals(epic.getDescription(), epic1.getDescription());
+        assertEquals(epic.getStatus(), epic1.getStatus());
+        assertEquals(epic.getStartTime().toString(), epic1.getStartTime().toString());
+        assertEquals(epic.getDuration(), epic1.getDuration());
         server.serverStop();
     }
 
@@ -192,5 +254,59 @@ public class TaskManagerHttpServerTest {
                     "Проверьте, пожалуйста, адрес и повторите попытку.");
         }
         return epics;
+    }
+
+    private Task returnTask(URI url) {
+        Task task = null;
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder().uri(url).
+                GET().build();
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            Gson gson = new GsonBuilder().
+                    registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).create();
+            task = gson.fromJson(response.body(), new TypeToken<Task>() {
+            }.getType());
+        } catch (IOException | InterruptedException e) {
+            System.out.println("Во время выполнения запроса ресурса по url-адресу: '" + url + "', возникла ошибка.\n" +
+                    "Проверьте, пожалуйста, адрес и повторите попытку.");
+        }
+        return task;
+    }
+
+    private Subtask returnSubtask(URI url) {
+        Subtask subtask = null;
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder().uri(url).
+                GET().build();
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            Gson gson = new GsonBuilder().
+                    registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).create();
+            subtask = gson.fromJson(response.body(), new TypeToken<Subtask>() {
+            }.getType());
+        } catch (IOException | InterruptedException e) {
+            System.out.println("Во время выполнения запроса ресурса по url-адресу: '" + url + "', возникла ошибка.\n" +
+                    "Проверьте, пожалуйста, адрес и повторите попытку.");
+        }
+        return subtask;
+    }
+
+    private Epic returnEpic(URI url) {
+        Epic epic = null;
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder().uri(url).
+                GET().build();
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            Gson gson = new GsonBuilder().
+                    registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).create();
+            epic = gson.fromJson(response.body(), new TypeToken<Epic>() {
+            }.getType());
+        } catch (IOException | InterruptedException e) {
+            System.out.println("Во время выполнения запроса ресурса по url-адресу: '" + url + "', возникла ошибка.\n" +
+                    "Проверьте, пожалуйста, адрес и повторите попытку.");
+        }
+        return epic;
     }
 }

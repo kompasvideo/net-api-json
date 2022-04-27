@@ -48,6 +48,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return epic;
     }
 
+
+    public Epic getEpicNoSave(int id) {
+        Epic epic = super.getEpic(id);
+        return epic;
+    }
+
     // 2.4 Создание. Сам объект должен передаваться в качестве параметра.
     @Override
     public int newTask(Task task) throws ValidationTimeException {
@@ -192,8 +198,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                         subTasks.put(Integer.parseInt(strArray[0]), subtask);
                         break;
                     case "EPIC":
-                        Epic epic = new Epic(strArray[2],strArray[4],Integer.parseInt(strArray[0]),
-                                null);
+                        Epic epic = new Epic(Integer.parseInt(strArray[0]), EnumTask.EPIC,strArray[2],
+                                getStatus(strArray[3]),strArray[4],startTime, duration);
                         epics.put(Integer.parseInt(strArray[0]),epic);
                         break;
                 }
@@ -280,7 +286,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
     void addSubtasksToEpic() {
         for (Subtask subtask : subTasks.values() ) {
-            Epic epic = getEpic(subtask.getParentId());
+            Epic epic = getEpicNoSave(subtask.getParentId());
             epic.addSubtask(subtask);
         }
     }

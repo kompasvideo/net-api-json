@@ -317,7 +317,7 @@ public class TestEpic extends InMemoryTaskManager {
             GsonBuilder gsonBuilder = new GsonBuilder();
             gson = new GsonBuilder().
                     registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).create();
-            Collection<Epic> epics = manager.getAllEpics();
+            List<Epic> epics = manager.getAllEpics();
             System.out.println(epics);
             Collection<Task> tasks = manager.getAllTasks();
             System.out.println(tasks);
@@ -327,6 +327,8 @@ public class TestEpic extends InMemoryTaskManager {
             response = gson.toJson(subtasks);
             //epics.
             response = gson.toJson(epics);
+            System.out.println("- 1 -");
+            System.out.println(response);
 
         }
         catch (Exception e) {

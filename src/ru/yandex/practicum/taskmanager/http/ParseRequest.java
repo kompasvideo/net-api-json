@@ -25,14 +25,38 @@ public class ParseRequest {
             case "/tasks/task/":
                 Collection<Task> tasks = manager.getAllTasks();
                 response = gson.toJson(tasks);
+                if (query != null) {
+                    String[] mas = query.split("=");
+                    int id = Integer.parseInt(mas[1]);
+                    Task task = manager.getTask(id);
+                    response = gson.toJson(task);
+                } else {
+                    response = "Нет такой задачи ";
+                }
                 break;
             case "/tasks/subtask/":
                 Collection<Subtask> subtasks = manager.getAllSubtasks();
                 response = gson.toJson(subtasks);
+                if (query != null) {
+                    String[] mas = query.split("=");
+                    int id = Integer.parseInt(mas[1]);
+                    Subtask subtask = manager.getSubtask(id);
+                    response = gson.toJson(subtask);
+                } else {
+                    response = "Нет такой подзадачи ";
+                }
                 break;
             case "/tasks/epic/":
-                Collection<Epic> epics = manager.getAllEpics();
+                List<Epic> epics = manager.getAllEpics();
                 response = gson.toJson(epics);
+                if (query != null) {
+                    String[] mas = query.split("=");
+                    int id = Integer.parseInt(mas[1]);
+                    Epic epic = manager.getEpic(id);
+                    response = gson.toJson(epic);
+                } else {
+                    response = "Нет такой подзадачи ";
+                }
                 break;
             case "/tasks/history":
                 List<Task> tasksH = manager.getHistoryManager().getHistory();
