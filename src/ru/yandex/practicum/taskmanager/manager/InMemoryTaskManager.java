@@ -38,8 +38,8 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Collection<Epic> getAllEpics() {
-        return epics.values();
+    public List<Epic> getAllEpics() {
+        return new ArrayList<>(epics.values());
     }
 
     // 2.2 Удаление всех задач.

@@ -48,6 +48,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return epic;
     }
 
+
+    public Epic getEpicNoSave(int id) {
+        Epic epic = super.getEpic(id);
+        return epic;
+    }
+
     // 2.4 Создание. Сам объект должен передаваться в качестве параметра.
     @Override
     public int newTask(Task task) throws ValidationTimeException {
@@ -184,17 +190,20 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     case "TASK":
                         Task task = new Task(Integer.parseInt(strArray[0]), EnumTask.TASK,strArray[2],
                                 getStatus(strArray[3]),strArray[4],startTime, duration);
-                        tasks.put(Integer.parseInt(strArray[0]), task);
+                        //tasks.put(Integer.parseInt(strArray[0]), task);
+                        newTask(task);
                         break;
                     case "SUBTASK":
                         Subtask subtask = new Subtask(Integer.parseInt(strArray[0]), EnumTask.SUBTASK,strArray[2],
                                 getStatus(strArray[3]),strArray[4],Integer.parseInt(strArray[5]), startTime, duration);
-                        subTasks.put(Integer.parseInt(strArray[0]), subtask);
+                        //subTasks.put(Integer.parseInt(strArray[0]), subtask);
+                        newSubtask(subtask);
                         break;
                     case "EPIC":
-                        Epic epic = new Epic(strArray[2],strArray[4],Integer.parseInt(strArray[0]),
-                                null);
-                        epics.put(Integer.parseInt(strArray[0]),epic);
+                        Epic epic = new Epic(Integer.parseInt(strArray[0]), EnumTask.EPIC,strArray[2],
+                                getStatus(strArray[3]),strArray[4],startTime, duration);
+                        //epics.put(Integer.parseInt(strArray[0]),epic);
+                        newEpic(epic);
                         break;
                 }
             }
@@ -205,6 +214,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         } catch (IOException e) {
             //e.printStackTrace();
             throw new ManagerSaveException("Ошибка в методе Save", e);
+        } catch (ValidationTimeException e) {
+            System.out.println(e.getMessage());
         }
     }
 
@@ -280,7 +291,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
     void addSubtasksToEpic() {
         for (Subtask subtask : subTasks.values() ) {
-            Epic epic = getEpic(subtask.getParentId());
+            Epic epic = getEpicNoSave(subtask.getParentId());
             epic.addSubtask(subtask);
         }
     }

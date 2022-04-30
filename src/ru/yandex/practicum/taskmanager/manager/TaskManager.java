@@ -3,10 +3,7 @@ package ru.yandex.practicum.taskmanager.manager;
 import ru.yandex.practicum.taskmanager.exceptions.ValidationTimeException;
 import ru.yandex.practicum.taskmanager.model.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public interface TaskManager {
     // 2.1 Получение списка всех задач.
@@ -14,7 +11,7 @@ public interface TaskManager {
 
     Collection<Subtask> getAllSubtasks();
 
-    Collection<Epic> getAllEpics();
+    List<Epic> getAllEpics();
 
     // 2.2 Удаление всех задач.
     void delAllTasks();

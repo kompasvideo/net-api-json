@@ -10,13 +10,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-public class kvServer {
+public class KVServer {
     public static final int PORT = 8078;
     public static final String API_KEY = "MY_KEY";
     private final HttpServer server;
     private final Map<String, String> data = new HashMap<>();
 
-    public kvServer() throws IOException {
+    public KVServer() throws IOException {
         server = HttpServer.create(new InetSocketAddress("localhost", PORT), 0);
         server.createContext("/register", (h) -> {
             try {
@@ -135,6 +135,6 @@ public class kvServer {
     }
 
     public static void main(String[] args) throws IOException {
-        new kvServer().start();
+        new KVServer().start();
     }
 }

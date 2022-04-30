@@ -7,6 +7,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
+
+import ru.yandex.practicum.taskmanager.exceptions.ValidationTimeException;
 import ru.yandex.practicum.taskmanager.manager.FileBackedTasksManager;
 import ru.yandex.practicum.taskmanager.manager.Manager;
 import ru.yandex.practicum.taskmanager.manager.TaskManager;
@@ -28,8 +31,17 @@ public class TaskHandler implements HttpHandler {
                 request = ParseRequest.parseGetRequest(manager, query, path);
                 break;
             case "POST" :
-                request = ParseRequest.parsePostRequest(manager, body, path);
-                break;
+                //request = ParseRequest.parsePostRequest(manager, body, path);
+                try {
+                    request = ParseRequest.parsePostRequest(manager, body, query, path);
+                } catch (ValidationTimeException e) {
+
+                }
+                exchange.sendResponseHeaders(200, 0);
+                try ( OutputStream os = exchange.getResponseBody()) {
+                    os.write(request.getBytes(StandardCharsets.UTF_8));
+                }
+                return;
             case "DELETE" :
                 request = ParseRequest.parseDeleteRequest(manager, query, path);
                 break;

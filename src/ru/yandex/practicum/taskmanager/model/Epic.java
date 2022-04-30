@@ -7,7 +7,7 @@ import java.util.Collection;
 import java.util.List;
 
 public class Epic extends Task {
-    private Collection<Subtask> subtasks = new ArrayList<>();
+    private List<Subtask> subtasks = new ArrayList<>();
 
     @Override
     public String toString() {
@@ -23,7 +23,7 @@ public class Epic extends Task {
     }
 
     public Epic(String title, String description, int id){
-        super(title, description, id, null, null);
+        super(title, description, id, LocalDateTime.MIN, Duration.ZERO);
         this.enumTask = EnumTask.EPIC;
         calculateStartTime();
         calculateDuration();
@@ -31,7 +31,7 @@ public class Epic extends Task {
 
     // Collection не везде подходит, у него нет метода get(index)
     public Epic(String title, String description, int id, List<Subtask> subtasks){
-        super(title, description, id, null, null);
+        super(title, description, id, LocalDateTime.MIN, Duration.ZERO);
         this.enumTask = EnumTask.EPIC;
         if (subtasks != null) {
             for (int i = 0; i < subtasks.size(); i++) {
@@ -44,10 +44,22 @@ public class Epic extends Task {
         calculateDuration();
     }
 
+    public Epic(int id, EnumTask enumTask, String title, Status status, String description, LocalDateTime startTime, Duration duration ) {
+        super(id,enumTask,title,status,description,startTime,duration);
+        this.enumTask = EnumTask.EPIC;
+        if (subtasks != null) {
+            for (int i = 0; i < subtasks.size(); i++) {
+                Subtask subtask = subtasks.get(i);
+                subtask.setParent(this);
+                this.subtasks.add(subtask);
+            }
+        }
+    }
+
     void calculateStartTime() {
-        LocalDateTime startTime = null;
+        LocalDateTime startTime = LocalDateTime.MIN;
         for (Subtask subtask: subtasks ) {
-            if (startTime == null) {
+            if (startTime == LocalDateTime.MIN) {
                 startTime = subtask.startTime;
             } else {
                 if ((subtask.startTime).compareTo(startTime) == -1) {
@@ -59,12 +71,12 @@ public class Epic extends Task {
     }
 
     void calculateDuration(){
-        LocalDateTime startTimeMore = null;
-        Duration duration = null;
+        LocalDateTime startTimeMore = LocalDateTime.MIN;
+        Duration duration = Duration.ZERO;
         if (subtasks.size() == 0)
             return;
         for (Subtask subtask: subtasks ) {
-            if (startTimeMore == null) {
+            if (startTimeMore == LocalDateTime.MIN) {
                 startTimeMore = subtask.startTime;
             } else {
                 //int i = (subtask.startTime).compareTo(startTimeMore);
@@ -78,7 +90,7 @@ public class Epic extends Task {
         this.duration = Duration.between(startTime, startTimeMore);
     }
 
-    public Collection<Subtask> getSubtasks() {
+    public List<Subtask> getSubtasks() {
         return subtasks;
     }
 
