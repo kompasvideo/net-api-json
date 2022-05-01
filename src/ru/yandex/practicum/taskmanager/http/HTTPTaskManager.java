@@ -42,12 +42,13 @@ public class HTTPTaskManager extends FileBackedTasksManager {
         kvTaskClient.put("history", json);
     }
 
-    public String load(String key) {
+    public String load(String key) throws NumberFormatException{
         String json = kvTaskClient.load(key);
         if (json != null) {
-            int i = -1;
-            i = Integer.getInteger(key,i);
-            if (i == -1) {
+            try {
+                int i = Integer.parseInt(key);
+            }
+            catch (NumberFormatException ex) {
                 return json;
             }
             return readJsonString(json, getSimpleName(Integer.parseInt(key))).toString();
