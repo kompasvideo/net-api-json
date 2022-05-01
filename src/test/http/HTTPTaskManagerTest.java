@@ -48,7 +48,7 @@ public class HTTPTaskManagerTest {
                 Duration.of(1, ChronoUnit.DAYS));
         taskManager.newTask(task);
         Assertions.assertEquals(
-                task,
+                task.toString(),
                 ((HTTPTaskManager) taskManager).load(String.valueOf(task.getId())),
                 "Задачи различаются");
     }
@@ -59,10 +59,9 @@ public class HTTPTaskManagerTest {
                 LocalDateTime.of(2022, 7, 3, 9, 0),
                 Duration.of(1, ChronoUnit.DAYS));
         taskManager.newSubtask(subtask);
-        Task task = ((HTTPTaskManager) taskManager).load(String.valueOf(subtask.getId()));
         Assertions.assertEquals(
                 subtask.toString(),
-                ((HTTPTaskManager) taskManager).load(String.valueOf(subtask.getId())).toString(),
+                ((HTTPTaskManager) taskManager).load(String.valueOf(subtask.getId())),
                 "Подзадачи разные ");
 
     }
@@ -80,14 +79,38 @@ public class HTTPTaskManagerTest {
                 LocalDateTime.of(2022, 7, 5, 9, 0),
                 Duration.of(1, ChronoUnit.DAYS)));
         Epic epic = new Epic("Эпик 1", "Описание эпика 1", 1211888646, subtasksTest);
-        String epic1 = epic.toString();
         taskManager.newEpic(epic);
-        String epic2 = ((HTTPTaskManager) taskManager).load(String.valueOf(epic.getId())).toString();
         Assertions.assertEquals(
                 epic.toString(),
-                ((HTTPTaskManager) taskManager).load(String.valueOf(epic.getId())).toString(),
+                ((HTTPTaskManager) taskManager).load(String.valueOf(epic.getId())),
                 "Эпики разные"
         );
+    }
 
+    @Test
+    void savedHistoryToServer() throws ValidationTimeException {
+        Task task1 =  new Task("Задача 1", "Описание задачи 1", 1211888641,
+                LocalDateTime.of(2022, 7, 1, 9, 0),
+                Duration.of(1, ChronoUnit.DAYS));
+        Task task2 =new Task("Задача 2", "Описание задачи 2", 1211888642,
+                LocalDateTime.of(2022, 7, 2, 9, 0),
+                Duration.of(1, ChronoUnit.DAYS));
+        taskManager.newTask(task1);
+        taskManager.newTask(task2);
+        taskManager.getTask(1211888641);
+        taskManager.getTask(1211888642);
+        String history = taskManager.getHistoryManager().toString(taskManager.getHistoryManager());
+        Assertions.assertEquals(
+                history,
+                ((HTTPTaskManager) taskManager).load("history").replace("\"",""),
+                "History разные"
+        );
+        String returnStr = ((HTTPTaskManager) taskManager).load("history").replace("\"","");
+        String[] strMas = returnStr.split(",");
+        Assertions.assertEquals(
+                2,
+                strMas.length,
+                "В History кол-во элементов разное"
+        );
     }
 }

@@ -42,15 +42,15 @@ public class HTTPTaskManager extends FileBackedTasksManager {
         kvTaskClient.put("history", json);
     }
 
-    public Task load(String key) {
+    public String load(String key) {
         String json = kvTaskClient.load(key);
         if (json != null) {
-//            int i = -1;
-//            i = Integer.getInteger(key,i);
-//            if (i == -1) {
-//                return readJsonHistory();
-//            }
-            return readJsonString(json, getSimpleName(Integer.parseInt(key)));
+            int i = -1;
+            i = Integer.getInteger(key,i);
+            if (i == -1) {
+                return json;
+            }
+            return readJsonString(json, getSimpleName(Integer.parseInt(key))).toString();
         } else
             return null;
     }
@@ -80,5 +80,4 @@ public class HTTPTaskManager extends FileBackedTasksManager {
         else
             return epics.get(id).getClass().getSimpleName();
     }
-
 }
