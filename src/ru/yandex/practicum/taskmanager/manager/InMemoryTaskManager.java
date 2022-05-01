@@ -22,8 +22,8 @@ public class InMemoryTaskManager implements TaskManager {
     protected Set<Task> tasksSet = new TreeSet(comparator);
 
 
-    public InMemoryTaskManager(HistoryManager historyManager) {
-        this.historyManager = historyManager;
+    public InMemoryTaskManager() {
+        historyManager = new InMemoryHistoryManager();
     }
 
     // 2.1 Получение списка всех задач.

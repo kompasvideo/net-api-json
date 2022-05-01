@@ -1,6 +1,11 @@
 package ru.yandex.practicum.taskmanager.manager;
 
 
+import ru.yandex.practicum.taskmanager.http.HTTPTaskManager;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+
 public class Manager  {
     private static InMemoryTaskManager inMemoryTaskManager;
     public static HistoryManager historyManager;
@@ -9,7 +14,7 @@ public class Manager  {
      * поэтому типом его возвращаемого значения будет TaskManager. */
     public static TaskManager getDefault(){
         historyManager = new InMemoryHistoryManager();
-        inMemoryTaskManager = new InMemoryTaskManager(historyManager);
+        inMemoryTaskManager = new InMemoryTaskManager();
         return inMemoryTaskManager;
     }
 
@@ -19,9 +24,9 @@ public class Manager  {
         return historyManager;
     }
 
-    public static TaskManager getDefault(String fileName){
+    public static TaskManager getDefault(String fileName) throws URISyntaxException, IOException, InterruptedException {
         historyManager = new InMemoryHistoryManager();
-        inMemoryTaskManager = new FileBackedTasksManager(historyManager, fileName);
+        inMemoryTaskManager = new HTTPTaskManager(fileName);
         return inMemoryTaskManager;
     }
 

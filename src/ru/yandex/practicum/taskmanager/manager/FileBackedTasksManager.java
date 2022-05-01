@@ -9,6 +9,7 @@ import ru.yandex.practicum.taskmanager.exceptions.ValidationTimeException;
 import ru.yandex.practicum.taskmanager.model.*;
 
 import java.io.*;
+import java.net.URISyntaxException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -16,14 +17,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class FileBackedTasksManager extends InMemoryTaskManager {
+public abstract class FileBackedTasksManager extends InMemoryTaskManager {
 
     private String fileName;
 
-    public FileBackedTasksManager(HistoryManager historyManager, String fileName) {
-        super(historyManager);
+    public FileBackedTasksManager(String fileName) {
+        super();
         this.fileName = fileName;
-        loadFromFile();
+        //loadFromFile();
     }
 
     // 2.3 Получение по идентификатору.
@@ -50,8 +51,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
 
     public Epic getEpicNoSave(int id) {
-        Epic epic = super.getEpic(id);
-        return epic;
+        return super.getEpic(id);
     }
 
     // 2.4 Создание. Сам объект должен передаваться в качестве параметра.
@@ -77,7 +77,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
 
-    void save() {
+    public void  save() {
         try (Writer fileWriter = new FileWriter(fileName)) {
                 fileWriter.write("id,type,name,status,description,epic,startTime,duration\r\n");
             for (Task task: tasks.values()) {
@@ -97,12 +97,15 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
 
-    static FileBackedTasksManager loadFromFile(File file) {
-        HistoryManager historyManager = new InMemoryHistoryManager();
-        String fileName = "file.csv";
-        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(historyManager,fileName);
+    static FileBackedTasksManager loadFromFile(String fileName) {
+        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(fileName) {
+            @Override
+            public void save() {
 
-        BufferedReader bufReader = null;
+            }
+        };
+
+        BufferedReader bufReader;
         try (Reader fileReader = new FileReader(fileName)) {
             bufReader = new BufferedReader(fileReader);
             bufReader.readLine();
@@ -117,13 +120,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     break;
                 }
                 strArray =  str.split(",");
-                LocalDateTime startTime =  LocalDateTime.MIN;
+                LocalDateTime startTime;
                 if (strArray[6].equals("null")) {
                     startTime = null;
                 } else {
                     startTime = LocalDateTime.parse(strArray[6]);
                 }
-                Duration duration = Duration.ZERO;
+                Duration duration;
                 if (strArray[7].equals("null")) {
                     duration = null;
                 } else {
@@ -158,8 +161,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return fileBackedTasksManager;
     }
 
-    void loadFromFile() {
-        BufferedReader bufReader = null;
+    protected void loadFromFile() {
+        fileName = "file2.csv";
+        BufferedReader bufReader;
         try (Reader fileReader = new FileReader(fileName)) {
             bufReader = new BufferedReader(fileReader);
             bufReader.readLine();
@@ -174,13 +178,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     break;
                 }
                 strArray =  str.split(",");
-                LocalDateTime startTime =  LocalDateTime.MIN;
+                LocalDateTime startTime;
                 if (strArray[6].equals("null")) {
                     startTime = null;
                 } else {
                     startTime = LocalDateTime.parse(strArray[6]);
                 }
-                Duration duration = Duration.ZERO;
+                Duration duration;
                 if (strArray[7].equals("null")) {
                     duration = null;
                 } else {
@@ -250,7 +254,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     /**
      * Создаёт заново историю просмотра
-     * @param ids
      */
     static void addTasksToHistory(List<Integer> ids, FileBackedTasksManager fileBackedTasksManager) {
         for (int id: ids ) {
@@ -310,7 +313,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             int taskId = manager.newTask(new Task("Задача 1", "Описание задачи 1", ++id,
                     LocalDateTime.of(2022, 7, 1, 9, 0),
                     Duration.of(1, ChronoUnit.DAYS)));
-            int task2Id = manager.newTask(new Task("Задача 2", "Описание задачи 2", ++id,
+            manager.newTask(new Task("Задача 2", "Описание задачи 2", ++id,
                     LocalDateTime.of(2022, 7, 2, 9, 0),
                     Duration.of(1, ChronoUnit.DAYS)));
 
@@ -336,9 +339,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             manager.getEpic(epicId);
 
             // 3. Создайте новый FileBackedTasksManager менеджер из этого же файла.
-            FileBackedTasksManager fileBackedTasksManager = null;
-            File file = new File(fileName);
-            fileBackedTasksManager = FileBackedTasksManager.loadFromFile(file);
+            FileBackedTasksManager fileBackedTasksManager;
+            fileBackedTasksManager = FileBackedTasksManager.loadFromFile(fileName);
 
             // 4.Проверьте, что история просмотра восстановилась верно и все задачи, эпики, подзадачи,
             // которые были в старом, есть в новом менеджере.
@@ -354,8 +356,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 System.out.println(task);
             }
         }
-        catch (ValidationTimeException e) {
+        catch (ValidationTimeException | URISyntaxException | IOException | InterruptedException e) {
             System.out.println(e.getMessage());
         }
     }
+
 }

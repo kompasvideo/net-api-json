@@ -1,21 +1,9 @@
 package ru.yandex.practicum.taskmanager.http;
-import ru.yandex.practicum.taskmanager.checks.CheckEpics;
-import ru.yandex.practicum.taskmanager.checks.CheckHistory;
-import ru.yandex.practicum.taskmanager.checks.CheckSubTasks;
-import ru.yandex.practicum.taskmanager.checks.CheckTasks;
-import ru.yandex.practicum.taskmanager.exceptions.ValidationTimeException;
 import ru.yandex.practicum.taskmanager.manager.*;
-import ru.yandex.practicum.taskmanager.model.Epic;
-import ru.yandex.practicum.taskmanager.model.Status;
-import ru.yandex.practicum.taskmanager.model.Subtask;
-import ru.yandex.practicum.taskmanager.model.Task;
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.InetSocketAddress;
-import java.util.Collection;
+
 import ru.yandex.practicum.taskmanager.manager.FileBackedTasksManager;
 
 public class HttpTaskServer  extends FileBackedTasksManager {
@@ -25,10 +13,15 @@ public class HttpTaskServer  extends FileBackedTasksManager {
     static TaskManager manager;
 
     public HttpTaskServer( String fileName) throws IOException {
-        super(new InMemoryHistoryManager(),fileName);
+        super(fileName);
         manager = this;
         server = HttpServer.create();
-        //kvServer = new KVServer();
+        loadFromFile();
+    }
+
+    @Override
+    public void save() {
+
     }
 
     public void startServer() throws IOException {

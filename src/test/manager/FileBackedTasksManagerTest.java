@@ -5,10 +5,13 @@ import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.taskmanager.exceptions.ValidationTimeException;
 import ru.yandex.practicum.taskmanager.manager.Manager;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+
 class FileBackedTasksManagerTest extends TaskManagerTest {
 
     @BeforeEach
-    public void beforeEach() {
+    public void beforeEach() throws URISyntaxException, IOException, InterruptedException {
         String fileName = "file.csv";
 
         manager = Manager.getDefault(fileName);
