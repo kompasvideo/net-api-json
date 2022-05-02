@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TaskManagerHttpServerTest {
@@ -39,17 +40,21 @@ public class TaskManagerHttpServerTest {
         assertEquals(2, tasks.size());
         for (Task task : tasks) {
             if (task.getId() == task1.getId()) {
-                assertEquals(task.getTitle(), task1.getTitle());
-                assertEquals(task.getDescription(), task1.getDescription());
-                assertEquals(task.getStatus(), task1.getStatus());
-                assertEquals(task.getStartTime().toString(), task1.getStartTime().toString());
-                assertEquals(task.getDuration(), task1.getDuration());
+                assertAll(
+                    () -> assertEquals(task.getTitle(), task1.getTitle()),
+                    () -> assertEquals(task.getDescription(), task1.getDescription()),
+                    () -> assertEquals(task.getStatus(), task1.getStatus()),
+                    () -> assertEquals(task.getStartTime().toString(), task1.getStartTime().toString()),
+                    () -> assertEquals(task.getDuration(), task1.getDuration())
+                );
             } else if (task.getId()== task2.getId()) {
-                assertEquals(task.getTitle(), task2.getTitle());
-                assertEquals(task.getDescription(), task2.getDescription());
-                assertEquals(task.getStatus(), task2.getStatus());
-                assertEquals(task.getStartTime().toString(), task2.getStartTime().toString());
-                assertEquals(task.getDuration(), task2.getDuration());
+                assertAll(
+                    () -> assertEquals(task.getTitle(), task2.getTitle()),
+                    () -> assertEquals(task.getDescription(), task2.getDescription()),
+                    () -> assertEquals(task.getStatus(), task2.getStatus()),
+                    () -> assertEquals(task.getStartTime().toString(), task2.getStartTime().toString()),
+                    () -> assertEquals(task.getDuration(), task2.getDuration())
+                );
             }
         }
         server.serverStop();
@@ -74,23 +79,29 @@ public class TaskManagerHttpServerTest {
         assertEquals(3, subtasks.size());
         for (Subtask subtask : subtasks) {
             if (subtask.getId() == subtask1.getId()) {
-                assertEquals(subtask.getTitle(), subtask1.getTitle());
-                assertEquals(subtask.getDescription(), subtask1.getDescription());
-                assertEquals(subtask.getStatus(), subtask1.getStatus());
-                assertEquals(subtask.getStartTime().toString(), subtask1.getStartTime().toString());
-                assertEquals(subtask.getDuration(), subtask1.getDuration());
+                assertAll(
+                    () -> assertEquals(subtask.getTitle(), subtask1.getTitle()),
+                    () -> assertEquals(subtask.getDescription(), subtask1.getDescription()),
+                    () -> assertEquals(subtask.getStatus(), subtask1.getStatus()),
+                    () -> assertEquals(subtask.getStartTime().toString(), subtask1.getStartTime().toString()),
+                    () -> assertEquals(subtask.getDuration(), subtask1.getDuration())
+                );
             } else if (subtask.getId()== subtask2.getId()) {
-                assertEquals(subtask.getTitle(), subtask2.getTitle());
-                assertEquals(subtask.getDescription(), subtask2.getDescription());
-                assertEquals(subtask.getStatus(), subtask2.getStatus());
-                assertEquals(subtask.getStartTime().toString(), subtask2.getStartTime().toString());
-                assertEquals(subtask.getDuration(), subtask2.getDuration());
+                assertAll(
+                    () -> assertEquals(subtask.getTitle(), subtask2.getTitle()),
+                    () -> assertEquals(subtask.getDescription(), subtask2.getDescription()),
+                    () -> assertEquals(subtask.getStatus(), subtask2.getStatus()),
+                    () -> assertEquals(subtask.getStartTime().toString(), subtask2.getStartTime().toString()),
+                    () -> assertEquals(subtask.getDuration(), subtask2.getDuration())
+                );
             } else if (subtask.getId()== subtask3.getId()) {
-                assertEquals(subtask.getTitle(), subtask3.getTitle());
-                assertEquals(subtask.getDescription(), subtask3.getDescription());
-                assertEquals(subtask.getStatus(), subtask3.getStatus());
-                assertEquals(subtask.getStartTime().toString(), subtask3.getStartTime().toString());
-                assertEquals(subtask.getDuration(), subtask3.getDuration());
+                assertAll(
+                    () -> assertEquals(subtask.getTitle(), subtask3.getTitle()),
+                    () -> assertEquals(subtask.getDescription(), subtask3.getDescription()),
+                    () -> assertEquals(subtask.getStatus(), subtask3.getStatus()),
+                    () -> assertEquals(subtask.getStartTime().toString(), subtask3.getStartTime().toString()),
+                    () -> assertEquals(subtask.getDuration(), subtask3.getDuration())
+                );
             }
         }
         server.serverStop();
@@ -121,17 +132,21 @@ public class TaskManagerHttpServerTest {
         assertEquals(2, epics.size());
         for (Epic epic : epics) {
             if (epic.getId() == epic1.getId()) {
-                assertEquals(epic.getTitle(), epic1.getTitle());
-                assertEquals(epic.getDescription(), epic1.getDescription());
-                assertEquals(epic.getStatus(), epic1.getStatus());
-                assertEquals(epic.getStartTime().toString(), epic1.getStartTime().toString());
-                assertEquals(epic.getDuration(), epic1.getDuration());
+                assertAll(
+                    () -> assertEquals(epic.getTitle(), epic1.getTitle()),
+                    () -> assertEquals(epic.getDescription(), epic1.getDescription()),
+                    () -> assertEquals(epic.getStatus(), epic1.getStatus()),
+                    () -> assertEquals(epic.getStartTime().toString(), epic1.getStartTime().toString()),
+                    () -> assertEquals(epic.getDuration(), epic1.getDuration())
+                );
             } else if (epic.getId()== epic2.getId()) {
-                assertEquals(epic.getTitle(), epic2.getTitle());
-                assertEquals(epic.getDescription(), epic2.getDescription());
-                assertEquals(epic.getStatus(), epic2.getStatus());
-                assertEquals(epic.getStartTime().toString(), epic2.getStartTime().toString());
-                assertEquals(epic.getDuration(), epic2.getDuration());
+                assertAll(
+                    () -> assertEquals(epic.getTitle(), epic2.getTitle()),
+                    () -> assertEquals(epic.getDescription(), epic2.getDescription()),
+                    () -> assertEquals(epic.getStatus(), epic2.getStatus()),
+                    () -> assertEquals(epic.getStartTime().toString(), epic2.getStartTime().toString()),
+                    () -> assertEquals(epic.getDuration(), epic2.getDuration())
+                );
             }
         }
         server.serverStop();
@@ -147,11 +162,13 @@ public class TaskManagerHttpServerTest {
                 LocalDateTime.of(2022, 7, 1, 9, 0),
                 Duration.of(1, ChronoUnit.DAYS));
         Task task = returnTask(url);
-        assertEquals(task.getTitle(), task1.getTitle());
-        assertEquals(task.getDescription(), task1.getDescription());
-        assertEquals(task.getStatus(), task1.getStatus());
-        assertEquals(task.getStartTime().toString(), task1.getStartTime().toString());
-        assertEquals(task.getDuration(), task1.getDuration());
+        assertAll(
+                () -> assertEquals(task.getTitle(), task1.getTitle()),
+                () -> assertEquals(task.getDescription(), task1.getDescription()),
+                () -> assertEquals(task.getStatus(), task1.getStatus()),
+                () -> assertEquals(task.getStartTime().toString(), task1.getStartTime().toString()),
+                () -> assertEquals(task.getDuration(), task1.getDuration())
+        );
         server.serverStop();
     }
 
@@ -165,11 +182,13 @@ public class TaskManagerHttpServerTest {
                 LocalDateTime.of(2022, 7, 3, 9, 0),
                 Duration.of(1, ChronoUnit.DAYS));
         Subtask subtask = returnSubtask(url);
-        assertEquals(subtask.getTitle(), subtask1.getTitle());
-        assertEquals(subtask.getDescription(), subtask1.getDescription());
-        assertEquals(subtask.getStatus(), subtask1.getStatus());
-        assertEquals(subtask.getStartTime().toString(), subtask1.getStartTime().toString());
-        assertEquals(subtask.getDuration(), subtask1.getDuration());
+        assertAll(
+                () -> assertEquals(subtask.getTitle(), subtask1.getTitle()),
+                () -> assertEquals(subtask.getDescription(), subtask1.getDescription()),
+                () -> assertEquals(subtask.getStatus(), subtask1.getStatus()),
+                () -> assertEquals(subtask.getStartTime().toString(), subtask1.getStartTime().toString()),
+                () -> assertEquals(subtask.getDuration(), subtask1.getDuration())
+        );
         server.serverStop();
     }
 
@@ -191,11 +210,13 @@ public class TaskManagerHttpServerTest {
                 Duration.of(1, ChronoUnit.DAYS)));
         Epic epic1 = new Epic("Эпик 1", "Описание эпика 1", 1211888646, subtasksTest);
         Epic epic = returnEpic(url);
-        assertEquals(epic.getTitle(), epic1.getTitle());
-        assertEquals(epic.getDescription(), epic1.getDescription());
-        assertEquals(epic.getStatus(), epic1.getStatus());
-        assertEquals(epic.getStartTime().toString(), epic1.getStartTime().toString());
-        assertEquals(epic.getDuration(), epic1.getDuration());
+        assertAll(
+                () -> assertEquals(epic.getTitle(), epic1.getTitle()),
+                () -> assertEquals(epic.getDescription(), epic1.getDescription()),
+                () -> assertEquals(epic.getStatus(), epic1.getStatus()),
+                () -> assertEquals(epic.getStartTime().toString(), epic1.getStartTime().toString()),
+                () -> assertEquals(epic.getDuration(), epic1.getDuration())
+        );
         server.serverStop();
     }
 
@@ -211,11 +232,13 @@ public class TaskManagerHttpServerTest {
         postTask(url,task1);
         url = URI.create("http://localhost:8080/tasks/task/?id=1211888648");
         Task task = returnTask(url);
-        assertEquals(task.getTitle(), task1.getTitle());
-        assertEquals(task.getDescription(), task1.getDescription());
-        assertEquals(task.getStatus(), task1.getStatus());
-        assertEquals(task.getStartTime().toString(), task1.getStartTime().toString());
-        assertEquals(task.getDuration(), task1.getDuration());
+        assertAll(
+                () -> assertEquals(task.getTitle(), task1.getTitle()),
+                () -> assertEquals(task.getDescription(), task1.getDescription()),
+                () -> assertEquals(task.getStatus(), task1.getStatus()),
+                () -> assertEquals(task.getStartTime().toString(), task1.getStartTime().toString()),
+                () -> assertEquals(task.getDuration(), task1.getDuration())
+        );
         server.serverStop();
     }
 
@@ -231,11 +254,13 @@ public class TaskManagerHttpServerTest {
         postSubtask(url,subtask1);
         url = URI.create("http://localhost:8080/tasks/subtask/?id=1211888649");
         Subtask subtask = returnSubtask(url);
-        assertEquals(subtask.getTitle(), subtask1.getTitle());
-        assertEquals(subtask.getDescription(), subtask1.getDescription());
-        assertEquals(subtask.getStatus(), subtask1.getStatus());
-        assertEquals(subtask.getStartTime().toString(), subtask1.getStartTime().toString());
-        assertEquals(subtask.getDuration(), subtask1.getDuration());
+        assertAll(
+                () -> assertEquals(subtask.getTitle(), subtask1.getTitle()),
+                () -> assertEquals(subtask.getDescription(), subtask1.getDescription()),
+                () -> assertEquals(subtask.getStatus(), subtask1.getStatus()),
+                () -> assertEquals(subtask.getStartTime().toString(), subtask1.getStartTime().toString()),
+                () -> assertEquals(subtask.getDuration(), subtask1.getDuration())
+        );
         server.serverStop();
     }
 
@@ -263,11 +288,13 @@ public class TaskManagerHttpServerTest {
         postEpic(url,epic1);
         url = URI.create("http://localhost:8080/tasks/epic/?id=1211888650");
         Epic epic = returnEpic(url);
-        assertEquals(epic.getTitle(), epic1.getTitle());
-        assertEquals(epic.getDescription(), epic1.getDescription());
-        assertEquals(epic.getStatus(), epic1.getStatus());
-        assertEquals(epic.getStartTime().toString(), epic1.getStartTime().toString());
-        assertEquals(epic.getDuration(), epic1.getDuration());
+        assertAll(
+                () -> assertEquals(epic.getTitle(), epic1.getTitle()),
+                () -> assertEquals(epic.getDescription(), epic1.getDescription()),
+                () -> assertEquals(epic.getStatus(), epic1.getStatus()),
+                () -> assertEquals(epic.getStartTime().toString(), epic1.getStartTime().toString()),
+                () -> assertEquals(epic.getDuration(), epic1.getDuration())
+        );
         server.serverStop();
     }
 
@@ -362,23 +389,29 @@ public class TaskManagerHttpServerTest {
         assertEquals(3, subtasks.size());
         for (Subtask subtask : subtasks) {
             if (subtask.getId() == subtask1.getId()) {
-                assertEquals(subtask.getTitle(), subtask1.getTitle());
-                assertEquals(subtask.getDescription(), subtask1.getDescription());
-                assertEquals(subtask.getStatus(), subtask1.getStatus());
-                assertEquals(subtask.getStartTime().toString(), subtask1.getStartTime().toString());
-                assertEquals(subtask.getDuration(), subtask1.getDuration());
+                assertAll(
+                        () -> assertEquals(subtask.getTitle(), subtask1.getTitle()),
+                        () -> assertEquals(subtask.getDescription(), subtask1.getDescription()),
+                        () -> assertEquals(subtask.getStatus(), subtask1.getStatus()),
+                        () -> assertEquals(subtask.getStartTime().toString(), subtask1.getStartTime().toString()),
+                        () -> assertEquals(subtask.getDuration(), subtask1.getDuration())
+                );
             } else if (subtask.getId()== subtask2.getId()) {
-                assertEquals(subtask.getTitle(), subtask2.getTitle());
-                assertEquals(subtask.getDescription(), subtask2.getDescription());
-                assertEquals(subtask.getStatus(), subtask2.getStatus());
-                assertEquals(subtask.getStartTime().toString(), subtask2.getStartTime().toString());
-                assertEquals(subtask.getDuration(), subtask2.getDuration());
+                assertAll(
+                        () -> assertEquals(subtask.getTitle(), subtask2.getTitle()),
+                        () -> assertEquals(subtask.getDescription(), subtask2.getDescription()),
+                        () -> assertEquals(subtask.getStatus(), subtask2.getStatus()),
+                        () -> assertEquals(subtask.getStartTime().toString(), subtask2.getStartTime().toString()),
+                        () -> assertEquals(subtask.getDuration(), subtask2.getDuration())
+                );
             } else if (subtask.getId()== subtask3.getId()) {
-                assertEquals(subtask.getTitle(), subtask3.getTitle());
-                assertEquals(subtask.getDescription(), subtask3.getDescription());
-                assertEquals(subtask.getStatus(), subtask3.getStatus());
-                assertEquals(subtask.getStartTime().toString(), subtask3.getStartTime().toString());
-                assertEquals(subtask.getDuration(), subtask3.getDuration());
+                assertAll(
+                        () -> assertEquals(subtask.getTitle(), subtask3.getTitle()),
+                        () -> assertEquals(subtask.getDescription(), subtask3.getDescription()),
+                        () -> assertEquals(subtask.getStatus(), subtask3.getStatus()),
+                        () -> assertEquals(subtask.getStartTime().toString(), subtask3.getStartTime().toString()),
+                        () -> assertEquals(subtask.getDuration(), subtask3.getDuration())
+                );
             }
         }
         server.serverStop();

@@ -14,16 +14,17 @@ import java.time.LocalDateTime;
 
 public class HTTPTaskManager extends FileBackedTasksManager {
     private final KVTaskClient kvTaskClient;
+    private final Gson gson;
 
     public HTTPTaskManager(String url) throws URISyntaxException, IOException, InterruptedException {
         super(url);
         this.kvTaskClient = new KVTaskClient(url);
+        gson = new GsonBuilder().
+                registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).create();
     }
     @Override
     public void save() {
         String json;
-        Gson gson = new GsonBuilder().
-                registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).create();
         for (Task task : tasks.values()) {
             json = gson.toJson(task);
             kvTaskClient.put(String.valueOf(task.getId()), json);

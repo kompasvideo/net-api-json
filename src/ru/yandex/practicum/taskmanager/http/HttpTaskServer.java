@@ -9,8 +9,7 @@ import ru.yandex.practicum.taskmanager.manager.FileBackedTasksManager;
 public class HttpTaskServer  extends FileBackedTasksManager {
     private static final int PORT = 8080;
     private HttpServer server;
-    //private final KVServer kvServer;
-    static TaskManager manager;
+    private static TaskManager manager;
 
     public HttpTaskServer( String fileName) throws IOException {
         super(fileName);
